@@ -13,7 +13,7 @@ from sqlalchemy import create_engine, text
 
 # Configurazione Pagina
 st.set_page_config(
-    page_title="Lola's Glam House | Luxury Beauty",
+    page_title="Lola's Glam House",
     page_icon="✨",
     layout="centered",
 )
@@ -39,22 +39,22 @@ for possible_bg in [
   if bg_base64:
     break
 
-# Stile CSS Professionale: Tema Luxury Dark & Champagne Gold
+# Stile CSS Luminoso, Elegante e Coerente con lo sfondo lilla/stellato
 bg_css_style = (
     f"""
     .stApp {{
-        background-image: linear-gradient(rgba(13, 10, 20, 0.82), rgba(13, 10, 20, 0.92)), url("data:image/png;base64,{bg_base64}");
+        background-image: linear-gradient(rgba(255, 255, 255, 0.12), rgba(120, 60, 150, 0.12)), url("data:image/png;base64,{bg_base64}");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
-        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-family: 'Inter', sans-serif;
     }}
     """
     if bg_base64
     else """
     .stApp {
-        background: radial-gradient(circle at 50% 0%, #1a1528 0%, #0d0a14 100%);
-        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: linear-gradient(135deg, #d8b4e2 0%, #b17ac1 100%);
+        font-family: 'Inter', sans-serif;
     }
     """
 )
@@ -62,116 +62,115 @@ bg_css_style = (
 st.markdown(
     f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-
     {bg_css_style}
 
-    /* Sidebar coordinata in stile Luxury */
+    /* Sidebar elegante e coordinata */
     [data-testid="stSidebar"] {{
-        background: #0f0c15 !important;
-        border-right: 1px solid rgba(212, 175, 55, 0.2);
+        background: rgba(70, 30, 95, 0.92) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.25);
     }}
     
     [data-testid="stHeader"] {{
         background: transparent !important;
     }}
 
-    /* Container con effetto Glassmorphism di lusso */
+    /* Container con effetto Glassmorphism chiaro e raffinato */
     div.stVerticalBlockBorderWrapper, div[data-testid="stVerticalBlockBorderWrapper"] {{
-        background: rgba(26, 21, 38, 0.75) !important;
-        backdrop-filter: blur(20px) !important;
-        -webkit-backdrop-filter: blur(20px) !important;
-        border: 1px solid rgba(212, 175, 55, 0.25) !important;
-        border-radius: 20px !important;
-        padding: 32px !important;
-        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5) !important;
+        background: rgba(255, 255, 255, 0.35) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
+        border-radius: 24px !important;
+        padding: 30px !important;
+        box-shadow: 0 15px 35px rgba(80, 30, 110, 0.15) !important;
     }}
 
     div[data-testid="stVerticalBlockBorderWrapper"] div {{
         background-color: transparent !important;
     }}
 
-    /* Campi di input eleganti */
+    /* Campi di input perfettamente leggibili e chiari */
     .stTextInput input, .stDateInput input, .stNumberInput input {{
-        background-color: rgba(20, 16, 30, 0.9) !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(212, 175, 55, 0.3) !important;
-        padding: 12px 16px !important;
-        color: #f7f2eb !important;
-        font-weight: 500 !important;
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border-radius: 12px !important;
+        border: 1.5px solid rgba(160, 100, 190, 0.4) !important;
+        padding: 10px 14px !important;
+        color: #3b1458 !important;
+        font-weight: 600 !important;
     }}
 
     .stTextInput input:focus, .stDateInput input:focus, .stNumberInput input:focus {{
-        border-color: #d4af37 !important;
-        box-shadow: 0 0 10px rgba(212, 175, 55, 0.2) !important;
+        border-color: #8e44ad !important;
+        box-shadow: 0 0 8px rgba(142, 68, 173, 0.3) !important;
     }}
 
-    /* Selectbox e menu a tendina */
+    /* Selectbox e menu a tendina chiari e leggibili */
     .stSelectbox div[data-baseweb="select"] > div {{
-        background-color: rgba(20, 16, 30, 0.9) !important;
-        border-radius: 10px !important;
-        border: 1px solid rgba(212, 175, 55, 0.3) !important;
-        color: #f7f2eb !important;
-        font-weight: 500 !important;
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border-radius: 12px !important;
+        border: 1.5px solid rgba(160, 100, 190, 0.4) !important;
+        color: #3b1458 !important;
+        font-weight: 600 !important;
     }}
 
     div[data-baseweb="select"] span {{
-        color: #f7f2eb !important;
-        font-weight: 500 !important;
+        color: #3b1458 !important;
+        font-weight: 600 !important;
     }}
 
-    /* Pulsanti con sfumatura Oro Champagne */
+    /* Pulsanti coerenti con lo sfondo (tonalità lilla/viola elegante, non scuri) */
     div.stButton > button, div.stDownloadButton > button, div.stFormSubmitButton > button {{
-        background: linear-gradient(135deg, #dfb15b 0%, #c59b42 100%) !important;
-        color: #120f18 !important;
-        border-radius: 12px !important;
-        font-size: 1rem !important;
-        font-weight: 700 !important;
-        border: none !important;
+        background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%) !important;
+        color: #ffffff !important;
+        border-radius: 14px !important;
+        font-size: 1.05rem !important;
+        font-weight: 600 !important;
+        border: 1px solid rgba(255, 255, 255, 0.5) !important;
         width: 100% !important;
-        padding: 14px 24px !important;
-        box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3) !important;
+        padding: 12px 24px !important;
+        box-shadow: 0 6px 20px rgba(142, 68, 173, 0.3) !important;
         transition: all 0.3s ease;
-        letter-spacing: 0.5px;
     }}
 
     div.stButton > button:hover, div.stFormSubmitButton > button:hover {{
-        background: linear-gradient(135deg, #ecc373 0%, #d4af37 100%) !important;
-        box-shadow: 0 12px 28px rgba(212, 175, 55, 0.5) !important;
+        background: linear-gradient(135deg, #af7ac5 0%, #9b59b6 100%) !important;
+        box-shadow: 0 8px 25px rgba(142, 68, 173, 0.45) !important;
         transform: translateY(-2px);
     }}
 
-    /* Tipografia di lusso */
+    /* Tipografia chiara, definita e professionale */
     h1, h2, h3, h4 {{
-        font-family: 'Playfair Display', serif !important;
-        color: #f7f2eb !important;
-        font-weight: 600 !important;
+        color: #3b1458 !important;
+        font-weight: 700 !important;
         text-align: center;
-        letter-spacing: 0.5px;
+        text-shadow: 0 1px 4px rgba(255, 255, 255, 0.6);
     }}
 
     p, span, label, .stMarkdown, [data-testid="stSidebar"] label {{
-        color: #d0c9d6 !important;
-        font-weight: 400;
+        color: #431a61 !important;
+        font-weight: 600;
     }}
 
-    /* Tab di navigazione rifinite */
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span, [data-testid="stSidebar"] label {{
+        color: #f3e5f5 !important;
+    }}
+
+    /* Tab di navigazione personalizzate */
     .stTabs [data-baseweb="tab"] {{
-        background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 12px !important;
-        color: #d0c9d6;
+        background-color: rgba(255, 255, 255, 0.4);
+        border-radius: 30px !important;
+        color: #3b1458;
         font-weight: 600;
         padding: 10px 24px !important;
-        border: 1px solid rgba(212, 175, 55, 0.15) !important;
+        border: 1px solid rgba(255, 255, 255, 0.6) !important;
         transition: all 0.3s ease;
     }}
 
     .stTabs [aria-selected="true"] {{
-        background: linear-gradient(135deg, #dfb15b 0%, #c59b42) !important;
-        color: #120f18 !important;
-        border-color: #dfb15b !important;
-        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4) !important;
-        font-weight: 700;
+        background: linear-gradient(135deg, #9b59b6 0%, #8e44ad) !important;
+        color: #ffffff !important;
+        border-color: rgba(255, 255, 255, 0.8) !important;
+        box-shadow: 0 6px 18px rgba(142, 68, 173, 0.4) !important;
     }}
 
     #MainMenu {{visibility: hidden;}}
@@ -182,7 +181,7 @@ st.markdown(
 )
 
 
-# Connessione Database Supabase / PostgreSQL[cite: 1]
+# Connessione Database Supabase / PostgreSQL
 @st.cache_resource
 def get_db_engine():
   db_url = st.secrets["supabase"]["db_url"]
@@ -650,12 +649,7 @@ else:
           st.image(logo_path, use_container_width=True)
 
       st.title("✨ Lola's Glam House ✨")
-      st.markdown(
-          "<p"
-          " style='text-align:center;letter-spacing:1px;margin-bottom:20px;'>ACCEDI"
-          " AL TUO ACCOUNT O REGISTRATI</p>",
-          unsafe_allow_html=True,
-      )
+      st.markdown("#### 👤 Accedi al tuo account o registrati")
 
       tab_login, tab_registrazione = st.tabs(["🔑 Accedi", "📝 Registrati"])
 
@@ -749,10 +743,7 @@ else:
 
     st.title("✨ Lola's Glam House ✨")
     st.markdown(
-        f"<p"
-        f" style='text-align: center; font-size:1.1rem; color:#dfb15b;"
-        f" margin-bottom: 20px;'>Benvenuta/o, {st.session_state['utente_loggato']['nome']}"
-        " 💖</p>",
+        f"<p style='text-align: center;'>Benvenuta/o, {st.session_state['utente_loggato']['nome']} 💖</p>",
         unsafe_allow_html=True,
     )
 
