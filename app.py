@@ -126,8 +126,8 @@ st.markdown(
         color: #f3e5f5 !important;
     }}
 
-    /* Tab personalizzate */
-    .stTabs [data-baseweb="tab"] {
+    /* Tab personalizzate - QUI C'ERA L'ERRORE, ORA RISOLTO! */
+    .stTabs [data-baseweb="tab"] {{
         background-color: rgba(255, 255, 255, 0.12);
         border-radius: 30px !important;
         color: #f3e5f5;
@@ -135,17 +135,17 @@ st.markdown(
         padding: 10px 24px !important;
         border: 1px solid rgba(255, 255, 255, 0.25) !important;
         transition: all 0.3s ease;
-    }
+    }}
 
-    .stTabs [aria-selected="true"] {
+    .stTabs [aria-selected="true"] {{
         background: linear-gradient(135deg, #b070d8 0%, #7b38a0) !important;
         color: #ffffff !important;
         border-color: rgba(255, 255, 255, 0.6) !important;
         box-shadow: 0 6px 20px rgba(123, 56, 160, 0.6) !important;
-    }
+    }}
 
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    #MainMenu {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
     </style>
 """,
     unsafe_allow_html=True,
