@@ -39,18 +39,13 @@ for possible_bg in [
   if bg_base64:
     break
 
-# Stile CSS Avanzato: Sfondo animato, Glassmorphism e pulsanti interattivi
+# Stile CSS Professionale: Sfondo statico di alta qualità, Sidebar coordinata e leggibilità perfetta
 bg_css_style = (
     f"""
-    @keyframes glamShimmer {{
-        0% {{ background-position: 0% 50%; }}
-        50% {{ background-position: 100% 50%; }}
-        100% {{ background-position: 0% 50%; }}
-    }}
     .stApp {{
-        background-image: linear-gradient(rgba(45, 20, 60, 0.35), rgba(30, 10, 45, 0.45)), url("data:image/png;base64,{bg_base64}");
-        background-size: 200% 200%;
-        animation: glamShimmer 20s ease infinite;
+        background-image: linear-gradient(rgba(35, 12, 50, 0.45), rgba(20, 5, 35, 0.55)), url("data:image/png;base64,{bg_base64}");
+        background-size: cover;
+        background-position: center;
         background-attachment: fixed;
         font-family: 'Inter', sans-serif;
     }}
@@ -69,32 +64,56 @@ st.markdown(
     <style>
     {bg_css_style}
 
-    /* Glassmorphism avanzato per i container */
+    /* Rimozione parti nere e tristi: Sidebar e Header coordinati in stile Glam */
+    [data-testid="stSidebar"] {{
+        background: linear-gradient(180deg, #3d1b52 0%, #200a30 100%) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.15);
+    }}
+    
+    [data-testid="stHeader"] {{
+        background: transparent !important;
+    }}
+
+    /* Vetro satinato elegante per i container principali */
     div.stVerticalBlockBorderWrapper, div[data-testid="stVerticalBlockBorderWrapper"] {{
-        background: rgba(255, 255, 255, 0.12) !important;
-        backdrop-filter: blur(14px) !important;
-        -webkit-backdrop-filter: blur(14px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        background: rgba(255, 255, 255, 0.14) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.35) !important;
         border-radius: 24px !important;
-        padding: 26px !important;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+        padding: 28px !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35) !important;
     }}
 
     div[data-testid="stVerticalBlockBorderWrapper"] div {{
         background-color: transparent !important;
     }}
 
-    /* Campi di input */
-    .stTextInput input, .stSelectbox > div > div, .stDateInput input, .stNumberInput input {{
-        background-color: rgba(255, 255, 255, 0.85) !important;
+    /* Campi di input ad altissima leggibilità */
+    .stTextInput input, .stDateInput input, .stNumberInput input {{
+        background-color: rgba(255, 255, 255, 0.95) !important;
         border-radius: 12px !important;
-        border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.8) !important;
         padding: 10px 14px !important;
-        color: #2c163a !important;
-        font-weight: 500;
+        color: #1f0b2e !important;
+        font-weight: 600 !important;
     }}
 
-    /* Pulsanti con animazioni e sfumature glam */
+    /* Selectbox e menu a tendina leggibili */
+    .stSelectbox div[data-baseweb="select"] > div {{
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border-radius: 12px !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.8) !important;
+        color: #1f0b2e !important;
+        font-weight: 600 !important;
+    }}
+
+    div[data-baseweb="select"] span {{
+        color: #1f0b2e !important;
+        font-weight: 600 !important;
+    }}
+
+    /* Pulsanti con sfumature Glam ed effetto interattivo */
     div.stButton > button, div.stDownloadButton > button, div.stFormSubmitButton > button {{
         background: linear-gradient(135deg, #b070d8 0%, #7b38a0 50%, #9c27b0 100%) !important;
         color: white !important;
@@ -105,16 +124,16 @@ st.markdown(
         width: 100% !important;
         padding: 12px 24px !important;
         box-shadow: 0 8px 25px rgba(123, 56, 160, 0.45) !important;
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transition: all 0.3s ease;
     }}
 
     div.stButton > button:hover, div.stFormSubmitButton > button:hover {{
-        background: linear-gradient(135deg, #c48de8 0%, #8e42b8 50%, #ab47bc 100%) !important;
+        background: linear-gradient(135deg, #c48de8 0%, #8e42b8 50%, #ab47bc) !important;
         box-shadow: 0 12px 30px rgba(142, 66, 184, 0.7) !important;
-        transform: translateY(-3px) scale(1.01);
+        transform: translateY(-2px);
     }}
 
-    /* Tipografia */
+    /* Tipografia chiara e raffinata */
     h1, h2, h3, h4 {{
         color: #fce4ec !important;
         font-weight: 700 !important;
@@ -122,11 +141,12 @@ st.markdown(
         text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
     }}
 
-    p, span, label, .stMarkdown {{
+    p, span, label, .stMarkdown, [data-testid="stSidebar"] label {{
         color: #f3e5f5 !important;
+        font-weight: 500;
     }}
 
-    /* Tab personalizzate - QUI C'ERA L'ERRORE, ORA RISOLTO! */
+    /* Tab di navigazione personalizzate */
     .stTabs [data-baseweb="tab"] {{
         background-color: rgba(255, 255, 255, 0.12);
         border-radius: 30px !important;
@@ -237,7 +257,6 @@ def elimina_prenotazioni_passate():
 elimina_prenotazioni_passate()
 
 
-# Gestione Account e Autenticazione
 def hash_password(password, salt=None):
   if salt is None:
     salt = secrets.token_hex(16)
