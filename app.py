@@ -43,7 +43,7 @@ for possible_bg in [
 bg_css_style = (
     f"""
     .stApp {{
-        background-image: linear-gradient(rgba(255, 255, 255, 0.12), rgba(120, 60, 150, 0.12)), url("data:image/png;base64,{bg_base64}");
+        background-image: linear-gradient(rgba(255, 255, 255, 0.08), rgba(120, 60, 150, 0.08)), url("data:image/png;base64,{bg_base64}");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -76,10 +76,10 @@ st.markdown(
 
     /* Container con effetto Glassmorphism chiaro e raffinato */
     div.stVerticalBlockBorderWrapper, div[data-testid="stVerticalBlockBorderWrapper"] {{
-        background: rgba(255, 255, 255, 0.35) !important;
+        background: rgba(255, 255, 255, 0.38) !important;
         backdrop-filter: blur(14px) !important;
         -webkit-backdrop-filter: blur(14px) !important;
-        border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.65) !important;
         border-radius: 24px !important;
         padding: 30px !important;
         box-shadow: 0 15px 35px rgba(80, 30, 110, 0.15) !important;
@@ -89,56 +89,79 @@ st.markdown(
         background-color: transparent !important;
     }}
 
-    /* Campi di input perfettamente leggibili e chiari */
-    .stTextInput input, .stDateInput input, .stNumberInput input {{
-        background-color: rgba(255, 255, 255, 0.95) !important;
+    /* --- CAMPI DI INPUT E FOCUS CHIARI E PULITI --- */
+    .stTextInput input, .stDateInput input, .stNumberInput input, 
+    .stTextInput div[data-baseweb="input"], .stDateInput div[data-baseweb="input"],
+    input[type="text"], input[type="password"] {{
+        background-color: rgba(255, 255, 255, 0.98) !important;
         border-radius: 12px !important;
-        border: 1.5px solid rgba(160, 100, 190, 0.4) !important;
-        padding: 10px 14px !important;
+        border: 1.5px solid rgba(160, 100, 190, 0.5) !important;
         color: #3b1458 !important;
         font-weight: 600 !important;
     }}
 
-    .stTextInput input:focus, .stDateInput input:focus, .stNumberInput input:focus {{
+    /* Rimozione di qualsiasi colore scuro al focus o interazione */
+    .stTextInput input:focus, .stDateInput input:focus, .stNumberInput input:focus,
+    div[data-baseweb="input"]:focus-within {{
+        background-color: #ffffff !important;
         border-color: #8e44ad !important;
-        box-shadow: 0 0 8px rgba(142, 68, 173, 0.3) !important;
+        box-shadow: 0 0 10px rgba(142, 68, 173, 0.35) !important;
+        color: #3b1458 !important;
     }}
 
-    /* Selectbox e menu a tendina chiari e leggibili */
-    .stSelectbox div[data-baseweb="select"] > div {{
-        background-color: rgba(255, 255, 255, 0.95) !important;
+    /* --- SELECTBOX E TENDINE CHIARI --- */
+    .stSelectbox div[data-baseweb="select"] > div,
+    div[data-baseweb="select"] div {{
+        background-color: rgba(255, 255, 255, 0.98) !important;
         border-radius: 12px !important;
-        border: 1.5px solid rgba(160, 100, 190, 0.4) !important;
+        border: 1.5px solid rgba(160, 100, 190, 0.5) !important;
         color: #3b1458 !important;
         font-weight: 600 !important;
     }}
 
-    div[data-baseweb="select"] span {{
+    div[data-baseweb="select"] span, div[data-baseweb="select"] svg {{
         color: #3b1458 !important;
+        fill: #3b1458 !important;
         font-weight: 600 !important;
     }}
 
-    /* Pulsanti coerenti con lo sfondo (tonalità lilla/viola elegante, non scuri) */
+    /* Dropdown menu a tendina aperto (popup opzioni) */
+    ul[data-baseweb="menu"], li[data-baseweb="option"] {{
+        background-color: #ffffff !important;
+        color: #3b1458 !important;
+    }}
+    
+    li[data-baseweb="option"]:hover {{
+        background-color: #f3e5f5 !important;
+        color: #8e44ad !important;
+    }}
+
+    /* --- PULSANTI COERENTI, LILLA/VIOLA CON TESTO BIANCO --- */
     div.stButton > button, div.stDownloadButton > button, div.stFormSubmitButton > button {{
         background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%) !important;
         color: #ffffff !important;
         border-radius: 14px !important;
         font-size: 1.05rem !important;
-        font-weight: 600 !important;
-        border: 1px solid rgba(255, 255, 255, 0.5) !important;
+        font-weight: 700 !important;
+        border: 1px solid rgba(255, 255, 255, 0.6) !important;
         width: 100% !important;
         padding: 12px 24px !important;
-        box-shadow: 0 6px 20px rgba(142, 68, 173, 0.3) !important;
+        box-shadow: 0 6px 20px rgba(142, 68, 173, 0.35) !important;
         transition: all 0.3s ease;
+    }}
+
+    div.stButton > button p, div.stFormSubmitButton > button p, div.stButton > button span {{
+        color: #ffffff !important;
+        font-weight: 700 !important;
     }}
 
     div.stButton > button:hover, div.stFormSubmitButton > button:hover {{
         background: linear-gradient(135deg, #af7ac5 0%, #9b59b6 100%) !important;
-        box-shadow: 0 8px 25px rgba(142, 68, 173, 0.45) !important;
+        box-shadow: 0 8px 25px rgba(142, 68, 173, 0.5) !important;
         transform: translateY(-2px);
     }}
 
-    /* Tipografia chiara, definita e professionale */
+    /* Tipografia generale chiara e definita */
     h1, h2, h3, h4 {{
         color: #3b1458 !important;
         font-weight: 700 !important;
@@ -155,9 +178,9 @@ st.markdown(
         color: #f3e5f5 !important;
     }}
 
-    /* Tab di navigazione personalizzate */
+    /* Tab di navigazione */
     .stTabs [data-baseweb="tab"] {{
-        background-color: rgba(255, 255, 255, 0.4);
+        background-color: rgba(255, 255, 255, 0.45);
         border-radius: 30px !important;
         color: #3b1458;
         font-weight: 600;
@@ -171,6 +194,10 @@ st.markdown(
         color: #ffffff !important;
         border-color: rgba(255, 255, 255, 0.8) !important;
         box-shadow: 0 6px 18px rgba(142, 68, 173, 0.4) !important;
+    }}
+
+    .stTabs [aria-selected="true"] p {{
+        color: #ffffff !important;
     }}
 
     #MainMenu {{visibility: hidden;}}
@@ -424,7 +451,6 @@ def popup_regolamento():
     st.rerun()
 
 
-# Catalogo Trattamenti di Lola's Glam House
 CATALOGO_SERVIZI = {
     "💅 UNGHIE": ["Mani", "Piedi", "Semipermanente o gel", "Refil", "Ricostruzione"],
     "👁️ CIGLIA": ["Montaggio", "Smontaggio", "Refil"],
