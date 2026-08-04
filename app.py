@@ -15,7 +15,7 @@ from sqlalchemy import create_engine, text
 st.set_page_config(
     page_title="Lola's Glam House",
     page_icon="✨",
-    layout="centered",
+    layout="wide",
 )
 
 
@@ -39,22 +39,22 @@ for possible_bg in [
   if bg_base64:
     break
 
-# Stile CSS Professionale: Sfondo statico di alta qualità, Sidebar coordinata e leggibilità perfetta
+# Stile CSS Avanzato ispirato al design di riferimento (Lumina Style)
 bg_css_style = (
     f"""
     .stApp {{
-        background-image: linear-gradient(rgba(35, 12, 50, 0.45), rgba(20, 5, 35, 0.55)), url("data:image/png;base64,{bg_base64}");
+        background-image: linear-gradient(rgba(45, 15, 60, 0.65), rgba(25, 5, 40, 0.75)), url("data:image/png;base64,{bg_base64}");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
     }}
     """
     if bg_base64
     else """
     .stApp {
-        background: linear-gradient(135deg, #2c163a 0%, #4a2858 100%);
-        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #321642 0%, #1a0826 100%);
+        font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
     }
     """
 )
@@ -64,115 +64,131 @@ st.markdown(
     <style>
     {bg_css_style}
 
-    /* Rimozione parti nere e tristi: Sidebar e Header coordinati in stile Glam */
-    [data-testid="stSidebar"] {{
-        background: linear-gradient(180deg, #3d1b52 0%, #200a30 100%) !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.15);
-    }}
-    
-    [data-testid="stHeader"] {{
-        background: transparent !important;
+    /* Nascondi header e footer di Streamlit */
+    [data-testid="stHeader"], footer {{
+        visibility: hidden;
     }}
 
-    /* Vetro satinato elegante per i container principali */
-    div.stVerticalBlockBorderWrapper, div[data-testid="stVerticalBlockBorderWrapper"] {{
-        background: rgba(255, 255, 255, 0.14) !important;
-        backdrop-filter: blur(16px) !important;
-        -webkit-backdrop-filter: blur(16px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.35) !important;
-        border-radius: 24px !important;
-        padding: 28px !important;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35) !important;
+    /* Layout generale a tutto schermo */
+    .block-container {{
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+        max-width: 100% !important;
     }}
 
-    div[data-testid="stVerticalBlockBorderWrapper"] div {{
-        background-color: transparent !important;
+    /* Card di sinistra (Pannello Brand & Info) */
+    .left-brand-card {{
+        background: rgba(85, 45, 115, 0.45);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 28px;
+        padding: 40px;
+        color: #ffffff;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        height: 100%;
     }}
 
-    /* Campi di input ad altissima leggibilità */
+    /* Card di destra (Form Card bianca/luminosa) */
+    .right-form-card {{
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 28px;
+        padding: 40px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+    }}
+
+    /* Campi di input in stile pulito ed elegante */
     .stTextInput input, .stDateInput input, .stNumberInput input {{
-        background-color: rgba(255, 255, 255, 0.95) !important;
-        border-radius: 12px !important;
-        border: 1.5px solid rgba(255, 255, 255, 0.8) !important;
-        padding: 10px 14px !important;
-        color: #1f0b2e !important;
-        font-weight: 600 !important;
+        background-color: #ffffff !important;
+        border-radius: 14px !important;
+        border: 1.5px solid #e2d4ec !important;
+        padding: 12px 16px !important;
+        color: #2c163a !important;
+        font-weight: 500 !important;
     }}
 
-    /* Selectbox e menu a tendina leggibili */
+    .stTextInput input:focus, .stDateInput input:focus {{
+        border-color: #8e42b8 !important;
+        box-shadow: 0 0 0 3px rgba(142, 66, 184, 0.15) !important;
+    }}
+
+    /* Selectbox */
     .stSelectbox div[data-baseweb="select"] > div {{
-        background-color: rgba(255, 255, 255, 0.95) !important;
-        border-radius: 12px !important;
-        border: 1.5px solid rgba(255, 255, 255, 0.8) !important;
-        color: #1f0b2e !important;
-        font-weight: 600 !important;
+        background-color: #ffffff !important;
+        border-radius: 14px !important;
+        border: 1.5px solid #e2d4ec !important;
+        color: #2c163a !important;
+        font-weight: 500 !important;
     }}
 
     div[data-baseweb="select"] span {{
-        color: #1f0b2e !important;
-        font-weight: 600 !important;
+        color: #2c163a !important;
     }}
 
-    /* Pulsanti con sfumature Glam ed effetto interattivo */
+    /* Pulsanti principali coordinati */
     div.stButton > button, div.stDownloadButton > button, div.stFormSubmitButton > button {{
-        background: linear-gradient(135deg, #b070d8 0%, #7b38a0 50%, #9c27b0 100%) !important;
+        background: linear-gradient(135deg, #9b51e0 0%, #7b38a0 100%) !important;
         color: white !important;
         border-radius: 14px !important;
         font-size: 1.05rem !important;
         font-weight: 600 !important;
-        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        border: none !important;
         width: 100% !important;
         padding: 12px 24px !important;
-        box-shadow: 0 8px 25px rgba(123, 56, 160, 0.45) !important;
+        box-shadow: 0 10px 25px rgba(123, 56, 160, 0.35) !important;
         transition: all 0.3s ease;
     }}
 
     div.stButton > button:hover, div.stFormSubmitButton > button:hover {{
-        background: linear-gradient(135deg, #c48de8 0%, #8e42b8 50%, #ab47bc) !important;
-        box-shadow: 0 12px 30px rgba(142, 66, 184, 0.7) !important;
+        background: linear-gradient(135deg, #a862e8 0%, #8e42b8 100%) !important;
+        box-shadow: 0 15px 30px rgba(142, 66, 184, 0.5) !important;
         transform: translateY(-2px);
     }}
 
-    /* Tipografia chiara e raffinata */
-    h1, h2, h3, h4 {{
-        color: #fce4ec !important;
-        font-weight: 700 !important;
-        text-align: center;
-        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-    }}
-
-    p, span, label, .stMarkdown, [data-testid="stSidebar"] label {{
-        color: #f3e5f5 !important;
-        font-weight: 500;
-    }}
-
-    /* Tab di navigazione personalizzate */
+    /* Tab di navigazione */
     .stTabs [data-baseweb="tab"] {{
-        background-color: rgba(255, 255, 255, 0.12);
-        border-radius: 30px !important;
-        color: #f3e5f5;
+        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: 20px !important;
+        color: #4a2858;
         font-weight: 600;
-        padding: 10px 24px !important;
-        border: 1px solid rgba(255, 255, 255, 0.25) !important;
-        transition: all 0.3s ease;
+        padding: 8px 20px !important;
+        border: 1px solid #e2d4ec !important;
+        margin-right: 8px;
     }}
 
     .stTabs [aria-selected="true"] {{
-        background: linear-gradient(135deg, #b070d8 0%, #7b38a0) !important;
+        background: linear-gradient(135deg, #9b51e0 0%, #7b38a0) !important;
         color: #ffffff !important;
-        border-color: rgba(255, 255, 255, 0.6) !important;
-        box-shadow: 0 6px 20px rgba(123, 56, 160, 0.6) !important;
+        box-shadow: 0 6px 20px rgba(123, 56, 160, 0.4) !important;
     }}
 
-    #MainMenu {{visibility: hidden;}}
-    footer {{visibility: hidden;}}
+    /* Tipografia personalizzata per la card bianca */
+    .right-form-card h1, .right-form-card h2, .right-form-card h3, .right-form-card h4 {{
+        color: #2c163a !important;
+        font-weight: 700 !important;
+    }}
+    .right-form-card p, .right-form-card label, .right-form-card span {{
+        color: #4a3b5c !important;
+    }}
+
+    /* Sidebar di amministrazione */
+    [data-testid="stSidebar"] {{
+        background: linear-gradient(180deg, #3d1b52 0%, #1a0826 100%) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }}
+    [data-testid="stSidebar"] label, [data-testid="stSidebar"] span {{
+        color: #f3e5f5 !important;
+    }}
     </style>
 """,
     unsafe_allow_html=True,
 )
 
 
-# Connessione Database Supabase / PostgreSQL
+# Connessione Database Supabase / PostgreSQL[cite: 1]
 @st.cache_resource
 def get_db_engine():
   db_url = st.secrets["supabase"]["db_url"]
@@ -415,7 +431,6 @@ def popup_regolamento():
     st.rerun()
 
 
-# Catalogo Trattamenti di Lola's Glam House Aggiornato
 CATALOGO_SERVIZI = {
     "💅 UNGHIE": ["Mani", "Piedi", "Semipermanente o gel", "Refil", "Ricostruzione"],
     "👁️ CIGLIA": ["Montaggio", "Smontaggio", "Refil"],
@@ -459,9 +474,6 @@ for possible_name in ["logo.png", "logo.PNG", "logo.jpg", "logo.jpeg"]:
     break
 
 # --- BARRA LATERALE ADMIN ---
-if logo_path:
-  st.sidebar.image(logo_path, use_container_width=True)
-
 st.sidebar.title("🔐 Area Admin")
 ADMIN_PASSWORD = st.secrets.get("admin_password", "GlamHouse2026")
 
@@ -625,7 +637,7 @@ if st.session_state["admin_logged_in"]:
     if not df_utenti.empty:
       st.dataframe(df_utenti, use_container_width=True)
 
-# --- VISTA 2: PAGINA PRINCIPALE CLIENTE ---
+# --- VISTA 2: PAGINA PRINCIPALE CLIENTE (SPLIT LAYOUT) ---
 else:
   client_device_id = get_client_device_id()
   with engine.begin() as conn:
@@ -637,214 +649,245 @@ else:
   if is_banned:
     st.error("⛔ Accesso negato.")
   else:
-    if "utente_loggato" not in st.session_state:
+    # Struttura a 2 colonne in stile Lumina Design
+    col_left, col_right = st.columns([1, 1], gap="large")
+
+    with col_left:
+      st.markdown('<div class="left-brand-card">', unsafe_allow_html=True)
       if logo_path:
-        c1, c2, c3 = st.columns([1, 2, 1])
-        with c2:
-          st.image(logo_path, use_container_width=True)
+        st.image(logo_path, width=120)
+      st.markdown("### Lola's Glam House")
+      st.markdown(
+          "<p style='color: #f3e5f5 !important; font-size: 0.95rem;'>Gestisci il"
+          " tuo centro estetico e le tue prenotazioni in modo semplice ed"
+          " efficace.</p>",
+          unsafe_allow_html=True,
+      )
 
-      st.title("✨ Lola's Glam House ✨")
-      st.markdown("#### 👤 Accedi al tuo account o registrati")
+      st.markdown("<br>", unsafe_allow_html=True)
+      st.markdown("📅 **Agenda Intelligente**<br><small style='color: #d1c4e9;'>Gestisci appuntamenti, clienti e promemoria in un unico calendario.</small>", unsafe_allow_html=True)
+      st.markdown("<br>", unsafe_allow_html=True)
+      st.markdown("✨ **Trattamenti Esclusivi**<br><small style='color: #d1c4e9;'>Scegli tra un'ampia gamma di servizi per la cura della persona.</small>", unsafe_allow_html=True)
+      st.markdown("<br>", unsafe_allow_html=True)
+      st.markdown("🔒 **Massima Sicurezza**<br><small style='color: #d1c4e9;'>Accesso riservato e protetto per ogni cliente e amministratore.</small>", unsafe_allow_html=True)
 
-      tab_login, tab_registrazione = st.tabs(["🔑 Accedi", "📝 Registrati"])
+      st.markdown("<br><br>", unsafe_allow_html=True)
+      st.markdown(
+          "<p style='text-align: center; font-style: italic; color:"
+          " #e1bee7;'>“La bellezza inizia dal benessere.”</p>",
+          unsafe_allow_html=True,
+      )
+      st.markdown("</div>", unsafe_allow_html=True)
 
-      with tab_login:
-        if st.session_state.get("vista_recupero", False):
-          st.markdown("##### 🔑 Reimposta Password")
-          with st.form("form_recupero"):
-            rec_nome = st.text_input("Nome *")
-            rec_cognome = st.text_input("Cognome *")
-            rec_cf = st.text_input("Codice Fiscale *")
-            rec_nuova_pw = st.text_input("Nuova Password *", type="password")
-            rec_conf_pw = st.text_input(
+    with col_right:
+      st.markdown('<div class="right-form-card">', unsafe_allow_html=True)
+
+      if "utente_loggato" not in st.session_state:
+        st.markdown(
+            "### 🔓 Accedi o Registrati",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            "<p style='font-size: 0.9rem; margin-bottom: 20px;'>Inserisci le tue"
+            " credenziali per accedere all'area riservata</p>",
+            unsafe_allow_html=True,
+        )
+
+        tab_login, tab_registrazione = st.tabs(["🔑 Accedi", "📝 Registrati"])
+
+        with tab_login:
+          if st.session_state.get("vista_recupero", False):
+            st.markdown("##### 🔑 Reimposta Password")
+            with st.form("form_recupero"):
+              rec_nome = st.text_input("Nome *")
+              rec_cognome = st.text_input("Cognome *")
+              rec_cf = st.text_input("Codice Fiscale *")
+              rec_nuova_pw = st.text_input("Nuova Password *", type="password")
+              rec_conf_pw = st.text_input(
+                  "Conferma Password *", type="password"
+              )
+
+              col_r1, col_r2 = st.columns(2)
+              with col_r1:
+                submit_rec = st.form_submit_button("Aggiorna")
+              with col_r2:
+                submit_ind = st.form_submit_button("Indietro")
+
+              if submit_ind:
+                st.session_state["vista_recupero"] = False
+                st.rerun()
+              if submit_rec:
+                if rec_nuova_pw != rec_conf_pw:
+                  st.error("Le password non coincidono.")
+                else:
+                  succ, msg = aggiorna_password_utente(
+                      rec_nome, rec_cognome, rec_cf, rec_nuova_pw
+                  )
+                  if succ:
+                    st.success(msg)
+                    st.session_state["vista_recupero"] = False
+                    st.rerun()
+                  else:
+                    st.error(msg)
+          else:
+            with st.form("form_login"):
+              login_nome = st.text_input("Nome *")
+              login_cognome = st.text_input("Cognome *")
+              login_password = st.text_input("Password *", type="password")
+
+              col_l1, col_l2 = st.columns(2)
+              with col_l1:
+                submit_log = st.form_submit_button("Accedi")
+              with col_l2:
+                submit_rec_click = st.form_submit_button("Password dimenticata?")
+
+              if submit_log:
+                utente, err = login_utente(
+                    login_nome, login_cognome, login_password
+                )
+                if utente:
+                  st.session_state["utente_loggato"] = utente
+                  st.rerun()
+                else:
+                  st.error(err)
+              elif submit_rec_click:
+                st.session_state["vista_recupero"] = True
+                st.rerun()
+
+        with tab_registrazione:
+          with st.form("form_reg"):
+            reg_nome = st.text_input("Nome *")
+            reg_cognome = st.text_input("Cognome *")
+            reg_cf = st.text_input("Codice Fiscale *")
+            reg_password = st.text_input("Password *", type="password")
+            reg_password_conf = st.text_input(
                 "Conferma Password *", type="password"
             )
+            submit_reg = st.form_submit_button("Crea Account")
 
-            col_r1, col_r2 = st.columns(2)
-            with col_r1:
-              submit_rec = st.form_submit_button("Aggiorna")
-            with col_r2:
-              submit_ind = st.form_submit_button("Indietro")
-
-            if submit_ind:
-              st.session_state["vista_recupero"] = False
-              st.rerun()
-            if submit_rec:
-              if rec_nuova_pw != rec_conf_pw:
+            if submit_reg:
+              if reg_password != reg_password_conf:
                 st.error("Le password non coincidono.")
               else:
-                succ, msg = aggiorna_password_utente(
-                    rec_nome, rec_cognome, rec_cf, rec_nuova_pw
+                succ, msg = registra_utente(
+                    reg_nome, reg_cognome, reg_cf, reg_password
                 )
                 if succ:
                   st.success(msg)
-                  st.session_state["vista_recupero"] = False
-                  st.rerun()
                 else:
                   st.error(msg)
-        else:
-          with st.form("form_login"):
-            login_nome = st.text_input("Nome *")
-            login_cognome = st.text_input("Cognome *")
-            login_password = st.text_input("Password *", type="password")
 
-            col_l1, col_l2 = st.columns(2)
-            with col_l1:
-              submit_log = st.form_submit_button("Accedi")
-            with col_l2:
-              submit_rec_click = st.form_submit_button("Password dimenticata?")
-
-            if submit_log:
-              utente, err = login_utente(
-                  login_nome, login_cognome, login_password
-              )
-              if utente:
-                st.session_state["utente_loggato"] = utente
-                st.rerun()
-              else:
-                st.error(err)
-            elif submit_rec_click:
-              st.session_state["vista_recupero"] = True
-              st.rerun()
-
-      with tab_registrazione:
-        with st.form("form_reg"):
-          reg_nome = st.text_input("Nome *")
-          reg_cognome = st.text_input("Cognome *")
-          reg_cf = st.text_input("Codice Fiscale *")
-          reg_password = st.text_input("Password *", type="password")
-          reg_password_conf = st.text_input(
-              "Conferma Password *", type="password"
-          )
-          submit_reg = st.form_submit_button("Crea Account")
-
-          if submit_reg:
-            if reg_password != reg_password_conf:
-              st.error("Le password non coincidono.")
-            else:
-              succ, msg = registra_utente(
-                  reg_nome, reg_cognome, reg_cf, reg_password
-              )
-              if succ:
-                st.success(msg)
-              else:
-                st.error(msg)
-      st.stop()
-
-    if logo_path:
-      c1, c2, c3 = st.columns([1, 2, 1])
-      with c2:
-        st.image(logo_path, use_container_width=True)
-
-    st.title("✨ Lola's Glam House ✨")
-    st.markdown(
-        f"<p style='text-align: center;'>Benvenuta/o, {st.session_state['utente_loggato']['nome']} 💖</p>",
-        unsafe_allow_html=True,
-    )
-
-    tab1, tab2, tab3 = st.tabs(["📅 Prenota", "ℹ️ Info", "📜 Regolamento"])
-
-    if st.session_state.get("mostra_dialog_regolamento", False):
-      popup_regolamento()
-
-    if (
-        st.session_state.get("regolamento_accettato", False)
-        and "pending_booking" in st.session_state
-    ):
-      pb = st.session_state["pending_booking"]
-      data_creazione_str = get_current_time_local().strftime("%Y-%m-%d %H:%M")
-      with engine.begin() as conn:
-        conn.execute(
-            text(
-                "INSERT INTO prenotazioni (nome, data, ora, trattamento,"
-                " data_creazione, device_id, stato_presenza, codice_fiscale,"
-                " codice_fiscale_2) VALUES (:n, :d, :o, :t, :dc, :di, :sp,"
-                " :cf1, :cf2)"
-            ),
-            {
-                "n": pb["nome_completo"],
-                "d": str(pb["data_scelta"]),
-                "o": pb["ora_scelta"],
-                "t": pb["trattamento"],
-                "dc": data_creazione_str,
-                "di": pb["client_device_id"],
-                "sp": "Assente",
-                "cf1": pb["cf_principale"],
-                "cf2": pb["cf_secondario"],
-            },
-        )
-      st.session_state["booking_success_msg"] = (
-          "🎉 Prenotazione confermata con successo!"
-      )
-      del st.session_state["pending_booking"]
-      st.session_state["regolamento_accettato"] = False
-      st.rerun()
-
-    with tab1:
-      if "booking_success_msg" in st.session_state:
-        st.success(st.session_state["booking_success_msg"])
-        if st.button("Nuova Prenotazione"):
-          del st.session_state["booking_success_msg"]
-          st.rerun()
       else:
-        with st.container(border=True):
-          ul = st.session_state["utente_loggato"]
+        # Utente Loggato - Gestione Prenotazioni & Info dentro la card di destra
+        ul = st.session_state["utente_loggato"]
+        st.markdown(
+            f"### Benvenuta/o, {ul['nome']} 💖",
+            unsafe_allow_html=True,
+        )
 
-          categoria_scelta = st.selectbox(
-              "Categoria Trattamento *", list(CATALOGO_SERVIZI.keys())
+        tab1, tab2, tab3 = st.tabs(["📅 Prenota", "ℹ️ Info", "📜 Regolamento"])
+
+        if st.session_state.get("mostra_dialog_regolamento", False):
+          popup_regolamento()
+
+        if (
+            st.session_state.get("regolamento_accettato", False)
+            and "pending_booking" in st.session_state
+        ):
+          pb = st.session_state["pending_booking"]
+          data_creazione_str = get_current_time_local().strftime("%Y-%m-%d %H:%M")
+          with engine.begin() as conn:
+            conn.execute(
+                text(
+                    "INSERT INTO prenotazioni (nome, data, ora, trattamento,"
+                    " data_creazione, device_id, stato_presenza, codice_fiscale,"
+                    " codice_fiscale_2) VALUES (:n, :d, :o, :t, :dc, :di, :sp,"
+                    " :cf1, :cf2)"
+                ),
+                {
+                    "n": pb["nome_completo"],
+                    "d": str(pb["data_scelta"]),
+                    "o": pb["ora_scelta"],
+                    "t": pb["trattamento"],
+                    "dc": data_creazione_str,
+                    "di": pb["client_device_id"],
+                    "sp": "Assente",
+                    "cf1": pb["cf_principale"],
+                    "cf2": pb["cf_secondario"],
+                },
+            )
+          st.session_state["booking_success_msg"] = (
+              "🎉 Prenotazione confermata con successo!"
           )
-          servizi_disponibili = CATALOGO_SERVIZI[categoria_scelta]
-          trattamento_specifico = st.selectbox(
-              "Servizio Specifico *", servizi_disponibili
-          )
+          del st.session_state["pending_booking"]
+          st.session_state["regolamento_accettato"] = False
+          st.rerun()
 
-          trattamento_completo = (
-              f"{categoria_scelta.split(' ')[1]} - {trattamento_specifico}"
-          )
-
-          data_scelta = st.date_input("Data *", min_value=datetime.today())
-
-          orari_disponibili = [h for h in get_orari_per_data(data_scelta)]
-          ora_scelta = (
-              st.selectbox("Orario *", orari_disponibili)
-              if orari_disponibili
-              else None
-          )
-
-          submitted = st.button("Conferma Prenotazione")
-          if submitted:
-            if not ora_scelta:
-              st.error(
-                  "Seleziona un orario valido (giorno chiuso o non disponibile)."
-              )
-            else:
-              st.session_state["pending_booking"] = {
-                  "nome_completo": f"{ul['nome']} {ul['cognome']}",
-                  "data_scelta": data_scelta,
-                  "ora_scelta": ora_scelta,
-                  "trattamento": trattamento_completo,
-                  "client_device_id": client_device_id,
-                  "cf_principale": ul["codice_fiscale"],
-                  "cf_secondario": None,
-              }
-              st.session_state["mostra_dialog_regolamento"] = True
+        with tab1:
+          if "booking_success_msg" in st.session_state:
+            st.success(st.session_state["booking_success_msg"])
+            if st.button("Nuova Prenotazione"):
+              del st.session_state["booking_success_msg"]
               st.rerun()
+          else:
+            categoria_scelta = st.selectbox(
+                "Categoria Trattamento *", list(CATALOGO_SERVIZI.keys())
+            )
+            servizi_disponibili = CATALOGO_SERVIZI[categoria_scelta]
+            trattamento_specifico = st.selectbox(
+                "Servizio Specifico *", servizi_disponibili
+            )
 
-    with tab2:
-      st.markdown("### Info Studio")
-      st.write(
-          "Benvenuta nel mondo di Lola's Glam House, dove la cura della persona"
-          " incontra l'eleganza e la professionalità."
-      )
+            trattamento_completo = (
+                f"{categoria_scelta.split(' ')[1]} - {trattamento_specifico}"
+            )
 
-    with tab3:
-      st.markdown("### Regolamento")
-      st.write(
-          "Consulta i nostri termini di servizio per vivere un'esperienza"
-          " rilassante e impeccabile."
-      )
+            data_scelta = st.date_input("Data *", min_value=datetime.today())
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("🚪 Esci"):
-      del st.session_state["utente_loggato"]
-      st.rerun()
+            orari_disponibili = [h for h in get_orari_per_data(data_scelta)]
+            ora_scelta = (
+                st.selectbox("Orario *", orari_disponibili)
+                if orari_disponibili
+                else None
+            )
+
+            submitted = st.button("Conferma Prenotazione")
+            if submitted:
+              if not ora_scelta:
+                st.error(
+                    "Seleziona un orario valido (giorno chiuso o non"
+                    " disponibile)."
+                )
+              else:
+                st.session_state["pending_booking"] = {
+                    "nome_completo": f"{ul['nome']} {ul['cognome']}",
+                    "data_scelta": data_scelta,
+                    "ora_scelta": ora_scelta,
+                    "trattamento": trattamento_completo,
+                    "client_device_id": client_device_id,
+                    "cf_principale": ul["codice_fiscale"],
+                    "cf_secondario": None,
+                }
+                st.session_state["mostra_dialog_regolamento"] = True
+                st.rerun()
+
+        with tab2:
+          st.markdown("#### Info Studio")
+          st.write(
+              "Benvenuta nel mondo di Lola's Glam House, dove la cura della"
+              " persona incontra l'eleganza e la professionalità."
+          )
+
+        with tab3:
+          st.markdown("#### Regolamento")
+          st.write(
+              "Consulta i nostri termini di servizio per vivere un'esperienza"
+              " rilassante e impeccabile."
+          )
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("🚪 Esci"):
+          del st.session_state["utente_loggato"]
+          st.rerun()
+
+      st.markdown("</div>", unsafe_allow_html=True)
