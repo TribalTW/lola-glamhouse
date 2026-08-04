@@ -1,22 +1,24 @@
 import base64
 import streamlit as st
+from supabase import create_client
 
-# Configurazione della pagina
+# Configurazione della pagina (sidebar espandibile/comprimibile di default)
 st.set_page_config(
     page_title="Lola's Glam House - Area Admin",
     page_icon="✨",
     layout="centered",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 
-# Funzione per caricare e impostare lo sfondo in formato Base64
-def set_background(png_file):
+# Funzione per impostare lo sfondo in formato Base64 e applicare lo stile personalizzato
+def set_custom_theme(png_file):
   try:
     with open(png_file, "rb") as f:
       encoded_string = base64.b64encode(f.read()).decode()
     css = f"""
         <style>
+        /* Sfondo generale con la galassia */
         .stApp {{
             background-image: url("data:image/png;base64,{encoded_string}");
             background-size: cover;
@@ -24,119 +26,210 @@ def set_background(png_file):
             background-repeat: no-repeat;
             background-attachment: fixed;
         }}
-        /* Personalizzazione della card centrale */
-        .login-container {{
-            background-color: rgba(255, 255, 255, 0.90);
+
+        /* Rimozione header di Streamlit */
+        header {{visibility: hidden;}}
+        
+        /* Card centrale in stile Glassmorphism */
+        .login-card {{
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
             padding: 2.5rem;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             max-width: 480px;
-            margin: 2rem auto;
-            color: #4a3b5c;
-            font-family: sans-serif;
+            margin: 1rem auto;
         }}
+
+        /* Tipografia del Brand */
         .brand-title {{
             text-align: center;
             color: #4A2E6B;
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 2px;
-            letter-spacing: 0.5px;
+            margin-bottom: 0px;
         }}
-        .title-text {{
+        .admin-subtitle {{
             text-align: center;
-            color: #5C4378;
-            font-size: 18px;
+            color: #6C5B7B;
+            font-size: 16px;
             font-weight: 600;
             margin-bottom: 5px;
         }}
-        .subtitle-text {{
+        .desc-text {{
             text-align: center;
-            color: #7a688d;
+            color: #8E7B9D;
             font-size: 13px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }}
-        .icon-header {{
-            text-align: center;
-            font-size: 30px;
-            margin-bottom: 10px;
+
+        /* Personalizzazione dei campi di input (eliminato il nero spento) */
+        .stTextInput input {{
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            color: #3b2b4d !important;
+            border-radius: 12px !important;
+            border: 1px solid #D7BDE2 !important;
+            padding: 10px 15px !important;
+            font-size: 15px !important;
         }}
-        /* Stile personalizzato per i pulsanti per richiamare il brand */
-        div.stButton > button:first-child {{
-            background-color: #8E44AD;
-            color: white;
-            border-radius: 10px;
-            border: none;
-            font-weight: 600;
+        .stTextInput input:focus {{
+            border-color: #8E44AD !important;
+            box-shadow: 0 0 8px rgba(142, 68, 173, 0.4) !important;
         }}
-        div.stButton > button:first-child:hover {{
-            background-color: #732D91;
-            color: white;
+        .stTextInput label p {{
+            color: #4A2E6B !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+        }}
+
+        /* Pulsanti personalizzati coordinati */
+        .stButton > button {{
+            background: linear-gradient(135deg, #8E44AD 0%, #6C3483 100%);
+            color: white !important;
+            border-radius: 12px !important;
+            border: none !important;
+            font-weight: 600 !important;
+            padding: 10px 20px !important;
+            box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
+            transition: all 0.3s ease;
+            width: 100%;
+        }}
+        .stButton > button:hover {{
+            background: linear-gradient(135deg, #732D91 0%, #512E5F 100%);
+            box-shadow: 0 6px 20px rgba(142, 68, 173, 0.5);
+        }}
+
+        /* Stile della tendina laterale (Sidebar) */
+        [data-testid="stSidebar"] {{
+            background-color: rgba(245, 238, 247, 0.92);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(142, 68, 173, 0.2);
+        }}
+        [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {{
+            color: #4A2E6B !important;
         }}
         </style>
         """
     st.markdown(css, unsafe_allow_html=True)
   except FileNotFoundError:
     st.error(
-        "Attenzione: Impossibile trovare il file 'background.png' nella"
-        " cartella principale di GitHub."
+        "Attenzione: file 'background.png' non trovato nella cartella principale"
+        " di GitHub."
     )
 
 
-# Applica lo sfondo
-set_background("background.png")
+# Applica lo sfondo e lo stile
+set_custom_theme("background.png")
 
-# Layout centrato (ottimizzato sia per PC che per mobile)
-col1, col2, col3 = st.columns([1, 3.5, 1])
+# Stato di sessione per il login
+if "logged_in" not in st.session_state:
+  st.session_state.logged_in = False
 
-with col2:
-  # Container visivo principale (stile card)
-  st.markdown('<div class="login-container">', unsafe_allow_html=True)
+# --- TENDINA A SINISTRA (SIDEBAR) ---
+with st.sidebar:
+  st.markdown("### ✨ Lola's Glam House")
+  st.markdown("---")
 
-  st.markdown('<div class="icon-header">✨</div>', unsafe_allow_html=True)
-  st.markdown(
-      '<div class="brand-title">Lola\'s Glam House</div>',
-      unsafe_allow_html=True,
-  )
-  st.markdown(
-      '<div class="title-text">Area Admin</div>', unsafe_allow_html=True
-  )
-  st.markdown(
-      '<div class="subtitle-text">Inserisci le tue credenziali per'
-      " accedere</div>",
-      unsafe_allow_html=True,
-  )
-
-  # Form di login
-  with st.form("login_form"):
-    nome = st.text_input("Nome", placeholder="Inserisci il tuo nome")
-    cognome = st.text_input("Cognome", placeholder="Inserisci il tuo cognome")
-    password = st.text_input(
-        "Password", type="password", placeholder="Inserisci la tua password"
+  if not st.session_state.logged_in:
+    st.info(
+        "🔒 Effettua l'accesso dall'area centrale per sbloccare la gestione del"
+        " salone."
     )
+  else:
+    st.success("✅ Area Admin attiva")
+    menu = st.radio(
+        "Navigazione Gestione:",
+        [
+            "📅 Visualizza Prenotazioni",
+            "➕ Nuova Prenotazione",
+            "🛠️ Gestione Servizi",
+        ],
+    )
+    st.markdown("---")
+    if st.button("🚪 Esci (Logout)"):
+      st.session_state.logged_in = False
+      st.rerun()
 
+# --- CORPO PRINCIPALE ---
+if not st.session_state.logged_in:
+  # Centriamo la card di login
+  col1, col2, col3 = st.columns([1, 2.5, 1])
+
+  with col2:
+    st.markdown('<div class="login-card">', unsafe_allow_html=True)
     st.markdown(
-        '<p style="font-size: 13px; text-align: left; margin-bottom:'
-        ' 15px;">Non hai un account? <a href="#" target="_self"'
-        ' style="color: #8E44AD; text-decoration: none; font-weight:'
-        ' bold;">Registrati</a></p>',
+        '<div style="text-align: center; font-size: 34px; margin-bottom:'
+        ' 5px;">🔒</div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<div class="brand-title">Lola\'s Glam House</div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<div class="admin-subtitle">Area Admin</div>', unsafe_allow_html=True
+    )
+    st.markdown(
+        '<div class="desc-text">Inserisci le credenziali per accedere alla'
+        " gestione</div>",
         unsafe_allow_html=True,
     )
 
-    # Pulsanti
-    submit_btn = st.form_submit_button("Accedi", use_container_width=True)
-    forgot_btn = st.form_submit_button(
-        "Password dimenticata?", use_container_width=True
+    with st.form("login_form"):
+      username_input = st.text_input("Nome Utente", placeholder="Es. Lola")
+      password_input = st.text_input(
+          "Password", type="password", placeholder="La tua password segreta"
+      )
+
+      submitted = st.form_submit_button("Accedi all'Area Admin")
+
+      if submitted:
+        # Recupero sicuro della password dai Secrets di Streamlit
+        admin_password_secret = st.secrets.get("ADMIN_PASSWORD", "")
+
+        if password_input == admin_password_secret and admin_password_secret:
+          st.session_state.logged_in = True
+          st.success("Accesso riuscito! Benvenuta.")
+          st.rerun()
+        else:
+          st.error("Password errata o non configurata nei Secrets.")
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+else:
+  # --- DASHBOARD DI GESTIONE PRENOTAZIONI CON SUPABASE ---
+  st.markdown(
+      """
+    <div style="background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(10px); padding: 2rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-top: 1rem;">
+        <h1 style="color: #4A2E6B; font-family: sans-serif;">Gestione Appuntamenti</h1>
+        <p style="color: #6C5B7B;">Da qui puoi controllare gli appuntamenti delle tue clienti sincronizzati in tempo reale con Supabase.</p>
+    </div>
+    """,
+      unsafe_allow_html=True,
+  )
+
+  # Connessione a Supabase tramite i Secrets
+  try:
+    SUPABASE_URL = st.secrets["SUPABASE_URL"]
+    SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+    supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+    st.markdown("### 📋 Elenco Prenotazioni")
+    # Esempio di chiamata tabella 'prenotazioni' su Supabase
+    response = supabase.table("prenotazioni").select("*").execute()
+    data = response.data
+
+    if data:
+      st.dataframe(data, use_container_width=True)
+    else:
+      st.info(
+          "Nessuna prenotazione trovata nel database Supabase (tabella"
+          " 'prenotazioni')."
+      )
+
+  except Exception as e:
+    st.warning(
+        "⚠️ Configurazione Supabase non trovata o incompleta nei Secrets di"
+        " Streamlit. Assicurati di aver inserito SUPABASE_URL e SUPABASE_KEY."
     )
-
-    if submit_btn:
-      # Logica di controllo (qui andrà integrato Supabase auth)
-      if nome and cognome and password:
-        st.success(f"Benvenuta in Lola's Glam House, {nome} {cognome}!")
-      else:
-        st.warning("Compila tutti i campi per procedere.")
-
-    if forgot_btn:
-      st.info("Funzione di recupero password in arrivo.")
-
-  st.markdown("</div>", unsafe_allow_html=True)
