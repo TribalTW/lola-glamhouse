@@ -1,4 +1,5 @@
 from datetime import datetime, time, timedelta
+import base64
 import hashlib
 import os
 import re
@@ -76,52 +77,81 @@ def init_db():
 
 init_db()
 
-# Stile CSS professionale e raffinato con tema Luxury Rose Gold / Champagne (#c98ca7, #d4838f, #88304e)
-st.markdown(
-    """
-    <style>
-    /* Sfondo generale pulito e luminoso */
-    .stApp {
-        background-color: #fcf8f9;
-        font-family: 'Inter', sans-serif;
-    }
+# Funzione per convertire l'immagine di sfondo in base64 per il CSS
+@st.cache_data
+def get_img_as_base64(file_path):
+    if os.path.exists(file_path):
+        with open(file_path, "rb") as f:
+            data = f.read()
+        return base64.b64encode(data).decode()
+    return ""
 
-    /* Container professionali con bordi arrotondati, sfumatura delicata e ombreggiature con animazione */
-    div.stVerticalBlockBorderWrapper, div[data-testid="stVerticalBlockBorderWrapper"] {
-        background: linear-gradient(135deg, #ffffff 0%, #fff4f6 100%) !important;
-        border: 1px solid #f2cfd5 !important;
+bg_base64 = get_img_as_base64("background.png")
+if bg_base64:
+    bg_css_rule = f"background: url('data:image/png;base64,{bg_base64}') no-repeat center center fixed; background-size: cover;"
+else:
+    bg_css_rule = "background-color: #3b2b4d;"
+
+# Stile CSS professionale e raffinato con tema viola stellato, campi bianchi e tendina chiara
+st.markdown(
+    f"""
+    <style>
+    /* Sfondo generale con immagine personalizzata */
+    .stApp {{
+        {bg_css_rule}
+        font-family: 'Inter', sans-serif;
+    }}
+
+    /* Container professionali con effetto glassmorphism chiaro e sfumature viola */
+    div.stVerticalBlockBorderWrapper, div[data-testid="stVerticalBlockBorderWrapper"] {{
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(245, 238, 250, 0.92) 100%) !important;
+        border: 1px solid #d8b4e2 !important;
         border-radius: 20px !important;
         padding: 24px !important;
-        box-shadow: 0 10px 30px rgba(201, 140, 167, 0.15) !important;
+        box-shadow: 0 10px 30px rgba(75, 40, 90, 0.25) !important;
         transition: all 0.3s ease-in-out !important;
-    }
+    }}
     
-    div[data-testid="stVerticalBlockBorderWrapper"]:hover {
-        box-shadow: 0 15px 35px rgba(201, 140, 167, 0.25) !important;
+    div[data-testid="stVerticalBlockBorderWrapper"]:hover {{
+        box-shadow: 0 15px 35px rgba(75, 40, 90, 0.35) !important;
         transform: translateY(-2px);
-    }
+    }}
     
-    div[data-testid="stVerticalBlockBorderWrapper"] div {
+    div[data-testid="stVerticalBlockBorderWrapper"] div {{
         background-color: transparent !important;
-    }
+    }}
     
-    /* Campi di input moderni */
-    .stTextInput input, .stSelectbox > div > div, .stDateInput input, .stNumberInput input {
+    /* Campi di input moderni con sfondo rigorosamente BIANCO e testo scuro */
+    .stTextInput input, .stDateInput input, .stNumberInput input {{
         background-color: #FFFFFF !important;
+        color: #333333 !important;
         border-radius: 10px !important;
-        border: 1.5px solid #e8b4be !important;
+        border: 1.5px solid #c8a2c8 !important;
         padding: 10px 14px !important;
         transition: all 0.2s ease-in-out !important;
-    }
+    }}
 
-    .stTextInput input:focus, .stSelectbox > div > div:focus, .stDateInput input:focus, .stNumberInput input:focus {
-        border-color: #a34863 !important;
-        box-shadow: 0 0 0 3px rgba(163, 72, 99, 0.15) !important;
-    }
+    .stTextInput input:focus, .stDateInput input:focus, .stNumberInput input:focus {{
+        border-color: #7b2cbf !important;
+        box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.2) !important;
+        color: #333333 !important;
+    }}
+
+    /* Stile personalizzato per i menu a tendina (Selectbox) con colore coerente NON scuro */
+    .stSelectbox div[data-baseweb="select"] > div {{
+        background-color: #f7f0fc !important;
+        color: #333333 !important;
+        border-radius: 10px !important;
+        border: 1.5px solid #c8a2c8 !important;
+    }}
     
-    /* Pulsanti professionali con tonalità glam/chic */
-    div.stButton > button, div.stDownloadButton > button, div.stFormSubmitButton > button {
-        background: linear-gradient(135deg, #b85c79 0%, #88304e 100%) !important;
+    .stSelectbox div[data-baseweb="select"] * {{
+        color: #333333 !important;
+    }}
+    
+    /* Pulsanti professionali con tonalità viola glam */
+    div.stButton > button, div.stDownloadButton > button, div.stFormSubmitButton > button {{
+        background: linear-gradient(135deg, #7b2cbf 0%, #4a154b 100%) !important;
         color: white !important;
         border-radius: 12px !important;
         font-size: 1.05rem !important;
@@ -132,128 +162,123 @@ st.markdown(
         margin-top: 8px !important;
         text-align: center !important;
         display: block !important;
-        box-shadow: 0 4px 15px rgba(136, 48, 78, 0.3) !important;
+        box-shadow: 0 4px 15px rgba(74, 21, 75, 0.4) !important;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         cursor: pointer;
-    }
+    }}
     
-    div.stButton > button:hover, div.stDownloadButton > button:hover, div.stFormSubmitButton > button:hover {
-        background: linear-gradient(135deg, #a34863 0%, #662038 100%) !important;
+    div.stButton > button:hover, div.stDownloadButton > button:hover, div.stFormSubmitButton > button:hover {{
+        background: linear-gradient(135deg, #8c36d1 0%, #5d1b5e 100%) !important;
         color: white !important;
-        box-shadow: 0 6px 20px rgba(136, 48, 78, 0.45) !important;
+        box-shadow: 0 6px 20px rgba(74, 21, 75, 0.6) !important;
         transform: translateY(-2px);
-    }
+    }}
 
-    div.stButton > button:active, div.stFormSubmitButton > button:active {
+    div.stButton > button:active, div.stFormSubmitButton > button:active {{
         transform: translateY(0px);
-        box-shadow: 0 2px 10px rgba(136, 48, 78, 0.3) !important;
-    }
+        box-shadow: 0 2px 10px rgba(74, 21, 75, 0.4) !important;
+    }}
 
     /* Stile specifico per il pulsante secondario (Password dimenticata?) */
-    div[data-testid="stColumn"]:nth-child(2) div.stFormSubmitButton > button {
-        background: #fff0f3 !important;
-        color: #88304e !important;
-        border: 1.5px solid #e8b4be !important;
-        box-shadow: 0 4px 15px rgba(232, 180, 190, 0.15) !important;
-    }
+    div[data-testid="stColumn"]:nth-child(2) div.stFormSubmitButton > button {{
+        background: #f4ecf7 !important;
+        color: #5b2c6f !important;
+        border: 1.5px solid #c8a2c8 !important;
+        box-shadow: 0 4px 15px rgba(200, 162, 200, 0.2) !important;
+    }}
 
-    div[data-testid="stColumn"]:nth-child(2) div.stFormSubmitButton > button:hover {
-        background: #ffe3e9 !important;
-        color: #662038 !important;
-        box-shadow: 0 6px 20px rgba(232, 180, 190, 0.3) !important;
+    div[data-testid="stColumn"]:nth-child(2) div.stFormSubmitButton > button:hover {{
+        background: #ebd8f3 !important;
+        color: #4a154b !important;
+        box-shadow: 0 6px 20px rgba(200, 162, 200, 0.4) !important;
         transform: translateY(-2px);
-    }
-    
-    div[data-testid="stColumn"] div.stButton > button.btn-aggiorna {
-        padding: 8px 16px !important;
-        font-size: 0.9rem !important;
-        width: auto !important;
-        white-space: nowrap !important;
-    }
+    }}
     
     /* Tipografia e Titoli */
-    h1, h2, h3, h4 {
-        color: #88304e !important;
+    h1, h2, h3, h4 {{
+        color: #4a154b !important;
         font-weight: 700 !important;
         letter-spacing: -0.5px;
         text-align: center;
-    }
+        text-shadow: 0 2px 4px rgba(255, 255, 255, 0.6);
+    }}
     
-    /* Box informativo in stile glam */
-    .box-info-carino {
-        background: linear-gradient(135deg, #fff0f3 0%, #ffe8ed) !important;
-        border: 1px solid #e8b4be !important;
+    /* Box informativo in stile glam viola */
+    .box-info-carino {{
+        background: linear-gradient(135deg, #f4ecf7 0%, #ebd8f3) !important;
+        border: 1px solid #c8a2c8 !important;
         border-radius: 14px !important;
         padding: 16px 20px !important;
         margin-bottom: 20px !important;
         text-align: center !important;
-        color: #88304e !important;
+        color: #4a154b !important;
         font-size: 0.98rem !important;
-        box-shadow: 0 4px 15px rgba(232, 180, 190, 0.15) !important;
-    }
+        box-shadow: 0 4px 15px rgba(200, 162, 200, 0.2) !important;
+    }}
     
-    /* Stile delle Tab di navigazione - Uniforme e a capsula */
-    .stTabs, .stTabs [data-baseweb="tab-list"], .stTabs div {
+    /* Stile delle Tab di navigazione */
+    .stTabs, .stTabs [data-baseweb="tab-list"], .stTabs div {{
         overflow: visible !important;
-    }
+    }}
 
-    .stTabs [data-baseweb="tab-highlight"] {
+    .stTabs [data-baseweb="tab-highlight"] {{
         display: none !important;
-    }
+    }}
 
-    .stTabs [data-baseweb="tab-list"] {
+    .stTabs [data-baseweb="tab-list"] {{
         display: flex !important;
         flex-wrap: wrap !important;
         justify-content: center !important;
         gap: 8px !important;
-    }
+    }}
 
-    .stTabs [data-baseweb="tab"] {
-        background-color: #fff0f3;
+    .stTabs [data-baseweb="tab"] {{
+        background-color: rgba(244, 236, 247, 0.9);
         border-radius: 40px !important;
-        color: #88304e;
+        color: #5b2c6f;
         font-weight: 600;
         padding: 10px 24px !important;
         text-align: center !important;
         font-size: 15px !important;
-        border: 1.5px solid #e8b4be !important;
+        border: 1.5px solid #c8a2c8 !important;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
         flex: 1 1 auto !important;
-    }
+    }}
 
-    .stTabs [data-baseweb="tab"]:hover {
-        background-color: #ffe3e9;
+    .stTabs [data-baseweb="tab"]:hover {{
+        background-color: rgba(235, 216, 243, 0.95);
         transform: translateY(-2px);
-    }
+    }}
 
-    .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #b85c79 0%, #88304e) !important;
+    .stTabs [aria-selected="true"] {{
+        background: linear-gradient(135deg, #7b2cbf 0%, #4a154b) !important;
         color: #ffffff !important;
-        border-color: #88304e !important;
+        border-color: #4a154b !important;
         border-radius: 40px !important;
         padding: 10px 24px !important;
-        box-shadow: 0 12px 30px rgba(136, 48, 78, 0.35) !important;
+        box-shadow: 0 12px 30px rgba(74, 21, 75, 0.4) !important;
         transform: translateY(-4px) scale(1.03) !important;
         z-index: 999 !important;
-    }
+    }}
 
-    @media (max-width: 768px) {
-        .stTabs [data-baseweb="tab"] {
+    @media (max-width: 768px) {{
+        .stTabs [data-baseweb="tab"] {{
             padding: 8px 14px !important;
             font-size: 13px !important;
-            min-width: auto !important;
-        }
-        .stTabs [aria-selected="true"] {
+        }}
+        .stTabs [aria-selected="true"] {{
             padding: 8px 14px !important;
-        }
-    }
+        }}
+    }}
 
-    .stCaption, p {
+    .stCaption, p {{
         text-align: center;
-    }
+        color: #2c1635;
+        font-weight: 500;
+    }}
 
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    #MainMenu {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
     </style>
 """,
     unsafe_allow_html=True,
@@ -616,7 +641,7 @@ if st.session_state["admin_logged_in"]:
                             key=f"pres_{app_id}",
                         )
                         st.markdown(
-                            f"<div style='color: #666; font-size: 0.85em; margin-top: -8px; margin-left: 24px;'>{tratt_cli}</div>",
+                            f"<div style='color: #4a154b; font-size: 0.85em; margin-top: -8px; margin-left: 24px; font-weight: 600;'>{tratt_cli}</div>",
                             unsafe_allow_html=True,
                         )
                         presenze_dict[app_id] = (
@@ -627,7 +652,7 @@ if st.session_state["admin_logged_in"]:
                         if is_presente:
                             codice_servizio = f"LOLA-GLAM-OK-{app_id}-{data_presenze_str}"
                             st.markdown(
-                                f"<code style='color: #88304e; font-weight: bold;'>{codice_servizio}</code>",
+                                f"<code style='color: #4a154b; font-weight: bold;'>{codice_servizio}</code>",
                                 unsafe_allow_html=True,
                             )
                         else:
@@ -684,8 +709,8 @@ if st.session_state["admin_logged_in"]:
 
         components.html(
             """
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #ffffff; padding: 20px; border-radius: 12px; border: 2px dashed #88304e;">
-            <h4 style="color: #88304e; margin-bottom: 10px;">Inquadra per Check-in in Salone ✨</h4>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #ffffff; padding: 20px; border-radius: 12px; border: 2px dashed #7b2cbf;">
+            <h4 style="color: #4a154b; margin-bottom: 10px;">Inquadra per Check-in in Salone ✨</h4>
             <div id="qrcode" style="margin: 15px;"></div>
             <p style="font-size: 12px; color: #555; text-align: center;">Inquadra con la fotocamera all'arrivo in salone.</p>
         </div>
@@ -983,7 +1008,7 @@ else:
                     st.markdown("---")
                     st.markdown(f"**Codice Servizio:**")
                     st.markdown(
-                        f"<h3 style='color: #88304e; text-align: center;'>`LOLA-GLAM-OK-{p_id}-{oggi_str}`</h3>",
+                        f"<h3 style='color: #4a154b; text-align: center;'>`LOLA-GLAM-OK-{p_id}-{oggi_str}`</h3>",
                         unsafe_allow_html=True,
                     )
             else:
@@ -1185,7 +1210,7 @@ else:
 
             with tab_login:
                 if st.session_state.get("vista_recupero", False):
-                    st.markdown("<h5 style='text-align: center; color: #88304e;'>🔑 Recupero Password</h5>", unsafe_allow_html=True)
+                    st.markdown("<h5 style='text-align: center; color: #4a154b;'>🔑 Recupero Password</h5>", unsafe_allow_html=True)
                     st.write("Inserisci Nome, Cognome, Codice Fiscale e la nuova password.")
                     with st.form("form_recupero_password"):
                         rec_nome = st.text_input("Nome *", key="rec_nome_input")
@@ -1354,8 +1379,8 @@ else:
                     st.markdown("---")
                     st.markdown(
                         """
-                        <div style="background-color: #fff0f3; padding: 22px; border-radius: 14px; border: 2px solid #88304e; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                            <h3 style="color: #88304e; margin-top: 0; font-size: 1.35rem;">📲 SALVA L'APPUNTAMENTO IN CALENDARIO</h3>
+                        <div style="background-color: #f4ecf7; padding: 22px; border-radius: 14px; border: 2px solid #7b2cbf; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                            <h3 style="color: #4a154b; margin-top: 0; font-size: 1.35rem;">📲 SALVA L'APPUNTAMENTO IN CALENDARIO</h3>
                             <p style="font-size: 1.05rem; color: #333; margin-bottom: 15px; line-height: 1.5;">
                                 Scarica il file dell'evento per aggiungerlo subito al calendario del tuo smartphone o computer!
                             </p>
