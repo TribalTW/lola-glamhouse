@@ -39,11 +39,11 @@ for possible_bg in [
   if bg_base64:
     break
 
-# Stile CSS Avanzato ispirato al design di riferimento (Lumina Style)
+# Stile CSS Avanzato basato sulle colonne native di Streamlit
 bg_css_style = (
     f"""
     .stApp {{
-        background-image: linear-gradient(rgba(45, 15, 60, 0.65), rgba(25, 5, 40, 0.75)), url("data:image/png;base64,{bg_base64}");
+        background-image: linear-gradient(rgba(40, 15, 55, 0.5), rgba(20, 5, 30, 0.6)), url("data:image/png;base64,{bg_base64}");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -69,67 +69,74 @@ st.markdown(
         visibility: hidden;
     }}
 
-    /* Layout generale a tutto schermo */
+    /* Layout generale */
     .block-container {{
-        padding-top: 2rem !important;
-        padding-bottom: 2rem !important;
-        max-width: 100% !important;
+        padding-top: 3rem !important;
+        padding-bottom: 3rem !important;
+        max-width: 95% !important;
     }}
 
-    /* Card di sinistra (Pannello Brand & Info) */
-    .left-brand-card {{
-        background: rgba(85, 45, 115, 0.45);
+    /* ==================== COLONNA DI SINISTRA (Brand & Info) ==================== */
+    [data-testid="column"]:nth-child(1) {{
+        background: rgba(75, 35, 105, 0.55) !important;
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 28px;
-        padding: 40px;
-        color: #ffffff;
+        border-radius: 28px !important;
+        padding: 40px !important;
         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-        height: 100%;
+    }}
+    
+    [data-testid="column"]:nth-child(1) h1, 
+    [data-testid="column"]:nth-child(1) h2, 
+    [data-testid="column"]:nth-child(1) h3, 
+    [data-testid="column"]:nth-child(1) p, 
+    [data-testid="column"]:nth-child(1) span, 
+    [data-testid="column"]:nth-child(1) label {{
+        color: #ffffff !important;
     }}
 
-    /* Card di destra (Form Card bianca/luminosa) */
-    .right-form-card {{
-        background: rgba(255, 255, 255, 0.94);
+    /* ==================== COLONNA DI DESTRA (Form Card Luminosa) ==================== */
+    [data-testid="column"]:nth-child(2) {{
+        background: rgba(255, 255, 255, 0.95) !important;
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.6);
-        border-radius: 28px;
-        padding: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 28px !important;
+        padding: 40px !important;
         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
     }}
 
-    /* Campi di input in stile pulito ed elegante */
-    .stTextInput input, .stDateInput input, .stNumberInput input {{
+    [data-testid="column"]:nth-child(2) h1, 
+    [data-testid="column"]:nth-child(2) h2, 
+    [data-testid="column"]:nth-child(2) h3, 
+    [data-testid="column"]:nth-child(2) h4, 
+    [data-testid="column"]:nth-child(2) label, 
+    [data-testid="column"]:nth-child(2) span {{
+        color: #2c163a !important;
+    }}
+
+    /* Campi di input nella card bianca */
+    [data-testid="column"]:nth-child(2) .stTextInput input, 
+    [data-testid="column"]:nth-child(2) .stDateInput input {{
         background-color: #ffffff !important;
         border-radius: 14px !important;
-        border: 1.5px solid #e2d4ec !important;
+        border: 1.5px solid #dcd0e8 !important;
         padding: 12px 16px !important;
         color: #2c163a !important;
         font-weight: 500 !important;
     }}
 
-    .stTextInput input:focus, .stDateInput input:focus {{
-        border-color: #8e42b8 !important;
-        box-shadow: 0 0 0 3px rgba(142, 66, 184, 0.15) !important;
-    }}
-
-    /* Selectbox */
-    .stSelectbox div[data-baseweb="select"] > div {{
+    /* Selectbox nella card bianca */
+    [data-testid="column"]:nth-child(2) .stSelectbox div[data-baseweb="select"] > div {{
         background-color: #ffffff !important;
         border-radius: 14px !important;
-        border: 1.5px solid #e2d4ec !important;
-        color: #2c163a !important;
-        font-weight: 500 !important;
-    }}
-
-    div[data-baseweb="select"] span {{
+        border: 1.5px solid #dcd0e8 !important;
         color: #2c163a !important;
     }}
 
-    /* Pulsanti principali coordinati */
-    div.stButton > button, div.stDownloadButton > button, div.stFormSubmitButton > button {{
+    /* Pulsanti principali */
+    div.stButton > button, div.stFormSubmitButton > button {{
         background: linear-gradient(135deg, #9b51e0 0%, #7b38a0 100%) !important;
         color: white !important;
         border-radius: 14px !important;
@@ -144,18 +151,18 @@ st.markdown(
 
     div.stButton > button:hover, div.stFormSubmitButton > button:hover {{
         background: linear-gradient(135deg, #a862e8 0%, #8e42b8 100%) !important;
-        box-shadow: 0 15px 30px rgba(142, 66, 184, 0.5) !important;
+        box-shadow: cmyk(0, 15px 30px rgba(142, 66, 184, 0.5)) !important;
         transform: translateY(-2px);
     }}
 
     /* Tab di navigazione */
     .stTabs [data-baseweb="tab"] {{
-        background-color: rgba(255, 255, 255, 0.7);
+        background-color: rgba(155, 81, 224, 0.1);
         border-radius: 20px !important;
-        color: #4a2858;
+        color: #5c3a72;
         font-weight: 600;
         padding: 8px 20px !important;
-        border: 1px solid #e2d4ec !important;
+        border: 1px solid #dcd0e8 !important;
         margin-right: 8px;
     }}
 
@@ -165,16 +172,7 @@ st.markdown(
         box-shadow: 0 6px 20px rgba(123, 56, 160, 0.4) !important;
     }}
 
-    /* Tipografia personalizzata per la card bianca */
-    .right-form-card h1, .right-form-card h2, .right-form-card h3, .right-form-card h4 {{
-        color: #2c163a !important;
-        font-weight: 700 !important;
-    }}
-    .right-form-card p, .right-form-card label, .right-form-card span {{
-        color: #4a3b5c !important;
-    }}
-
-    /* Sidebar di amministrazione */
+    /* Sidebar Admin */
     [data-testid="stSidebar"] {{
         background: linear-gradient(180deg, #3d1b52 0%, #1a0826 100%) !important;
         border-right: 1px solid rgba(255, 255, 255, 0.1);
@@ -637,7 +635,7 @@ if st.session_state["admin_logged_in"]:
     if not df_utenti.empty:
       st.dataframe(df_utenti, use_container_width=True)
 
-# --- VISTA 2: PAGINA PRINCIPALE CLIENTE (SPLIT LAYOUT) ---
+# --- VISTA 2: PAGINA PRINCIPALE CLIENTE (SPLIT LAYOUT NATIVO) ---
 else:
   client_device_id = get_client_device_id()
   with engine.begin() as conn:
@@ -649,13 +647,18 @@ else:
   if is_banned:
     st.error("⛔ Accesso negato.")
   else:
-    # Struttura a 2 colonne in stile Lumina Design
+    # Creazione delle due colonne affiancate
     col_left, col_right = st.columns([1, 1], gap="large")
 
     with col_left:
-      st.markdown('<div class="left-brand-card">', unsafe_allow_html=True)
-      if logo_path:
-        st.image(logo_path, width=120)
+      if logo_path and os.path.exists(logo_path):
+        st.image(logo_path, width=130)
+      else:
+        st.markdown(
+            "### ✨ Lola's Glam House ✨",
+            unsafe_allow_html=True,
+        )
+
       st.markdown("### Lola's Glam House")
       st.markdown(
           "<p style='color: #f3e5f5 !important; font-size: 0.95rem;'>Gestisci il"
@@ -665,23 +668,34 @@ else:
       )
 
       st.markdown("<br>", unsafe_allow_html=True)
-      st.markdown("📅 **Agenda Intelligente**<br><small style='color: #d1c4e9;'>Gestisci appuntamenti, clienti e promemoria in un unico calendario.</small>", unsafe_allow_html=True)
+      st.markdown(
+          "📅 **Agenda Intelligente**<br><small style='color: #e1bee7;'>Gestisci"
+          " appuntamenti, clienti e promemoria in un unico calendario.</small>",
+          unsafe_allow_html=True,
+      )
       st.markdown("<br>", unsafe_allow_html=True)
-      st.markdown("✨ **Trattamenti Esclusivi**<br><small style='color: #d1c4e9;'>Scegli tra un'ampia gamma di servizi per la cura della persona.</small>", unsafe_allow_html=True)
+      st.markdown(
+          "✨ **Trattamenti Esclusivi**<br><small style='color:"
+          " #e1bee7;'>Scegli tra un'ampia gamma di servizi per la cura della"
+          " persona.</small>",
+          unsafe_allow_html=True,
+      )
       st.markdown("<br>", unsafe_allow_html=True)
-      st.markdown("🔒 **Massima Sicurezza**<br><small style='color: #d1c4e9;'>Accesso riservato e protetto per ogni cliente e amministratore.</small>", unsafe_allow_html=True)
+      st.markdown(
+          "🔒 **Massima Sicurezza**<br><small style='color:"
+          " #e1bee7;'>Accesso riservato e protetto per ogni cliente e"
+          " amministratore.</small>",
+          unsafe_allow_html=True,
+      )
 
       st.markdown("<br><br>", unsafe_allow_html=True)
       st.markdown(
           "<p style='text-align: center; font-style: italic; color:"
-          " #e1bee7;'>“La bellezza inizia dal benessere.”</p>",
+          " #f8bbd0;'>“La bellezza inizia dal benessere.”</p>",
           unsafe_allow_html=True,
       )
-      st.markdown("</div>", unsafe_allow_html=True)
 
     with col_right:
-      st.markdown('<div class="right-form-card">', unsafe_allow_html=True)
-
       if "utente_loggato" not in st.session_state:
         st.markdown(
             "### 🔓 Accedi o Registrati",
@@ -778,7 +792,6 @@ else:
                   st.error(msg)
 
       else:
-        # Utente Loggato - Gestione Prenotazioni & Info dentro la card di destra
         ul = st.session_state["utente_loggato"]
         st.markdown(
             f"### Benvenuta/o, {ul['nome']} 💖",
@@ -889,5 +902,3 @@ else:
         if st.button("🚪 Esci"):
           del st.session_state["utente_loggato"]
           st.rerun()
-
-      st.markdown("</div>", unsafe_allow_html=True)
