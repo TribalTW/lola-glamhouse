@@ -1,904 +1,142 @@
 import base64
-from datetime import datetime, time, timedelta
-import hashlib
-import os
-import re
-import secrets
-import uuid
-from zoneinfo import ZoneInfo
-import pandas as pd
-import psycopg2
 import streamlit as st
-from sqlalchemy import create_engine, text
 
-# Configurazione Pagina
+# Configurazione della pagina
 st.set_page_config(
-    page_title="Lola's Glam House",
+    page_title="Lola's Glam House - Area Admin",
     page_icon="✨",
-    layout="wide",
+    layout="centered",
+    initial_sidebar_state="collapsed",
 )
 
 
-# Funzione per convertire l'immagine di sfondo in base64
-def get_base64_image(image_path):
-  if os.path.exists(image_path):
-    with open(image_path, "rb") as f:
-      data = f.read()
-    return base64.b64encode(data).decode()
-  return None
-
-
-bg_base64 = None
-for possible_bg in [
-    "background.png",
-    "background.jpg",
-    "background.jpeg",
-    "image.png",
-]:
-  bg_base64 = get_base64_image(possible_bg)
-  if bg_base64:
-    break
-
-# Stile CSS Avanzato basato sulle colonne native di Streamlit
-bg_css_style = (
-    f"""
-    .stApp {{
-        background-image: linear-gradient(rgba(40, 15, 55, 0.5), rgba(20, 5, 30, 0.6)), url("data:image/png;base64,{bg_base64}");
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-        font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-    }}
-    """
-    if bg_base64
-    else """
-    .stApp {
-        background: linear-gradient(135deg, #321642 0%, #1a0826 100%);
-        font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-    }
-    """
-)
-
-st.markdown(
-    f"""
-    <style>
-    {bg_css_style}
-
-    /* Nascondi header e footer di Streamlit */
-    [data-testid="stHeader"], footer {{
-        visibility: hidden;
-    }}
-
-    /* Layout generale */
-    .block-container {{
-        padding-top: 3rem !important;
-        padding-bottom: 3rem !important;
-        max-width: 95% !important;
-    }}
-
-    /* ==================== COLONNA DI SINISTRA (Brand & Info) ==================== */
-    [data-testid="column"]:nth-child(1) {{
-        background: rgba(75, 35, 105, 0.55) !important;
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 28px !important;
-        padding: 40px !important;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-    }}
-    
-    [data-testid="column"]:nth-child(1) h1, 
-    [data-testid="column"]:nth-child(1) h2, 
-    [data-testid="column"]:nth-child(1) h3, 
-    [data-testid="column"]:nth-child(1) p, 
-    [data-testid="column"]:nth-child(1) span, 
-    [data-testid="column"]:nth-child(1) label {{
-        color: #ffffff !important;
-    }}
-
-    /* ==================== COLONNA DI DESTRA (Form Card Luminosa) ==================== */
-    [data-testid="column"]:nth-child(2) {{
-        background: rgba(255, 255, 255, 0.95) !important;
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        border-radius: 28px !important;
-        padding: 40px !important;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
-    }}
-
-    [data-testid="column"]:nth-child(2) h1, 
-    [data-testid="column"]:nth-child(2) h2, 
-    [data-testid="column"]:nth-child(2) h3, 
-    [data-testid="column"]:nth-child(2) h4, 
-    [data-testid="column"]:nth-child(2) label, 
-    [data-testid="column"]:nth-child(2) span {{
-        color: #2c163a !important;
-    }}
-
-    /* Campi di input nella card bianca */
-    [data-testid="column"]:nth-child(2) .stTextInput input, 
-    [data-testid="column"]:nth-child(2) .stDateInput input {{
-        background-color: #ffffff !important;
-        border-radius: 14px !important;
-        border: 1.5px solid #dcd0e8 !important;
-        padding: 12px 16px !important;
-        color: #2c163a !important;
-        font-weight: 500 !important;
-    }}
-
-    /* Selectbox nella card bianca */
-    [data-testid="column"]:nth-child(2) .stSelectbox div[data-baseweb="select"] > div {{
-        background-color: #ffffff !important;
-        border-radius: 14px !important;
-        border: 1.5px solid #dcd0e8 !important;
-        color: #2c163a !important;
-    }}
-
-    /* Pulsanti principali */
-    div.stButton > button, div.stFormSubmitButton > button {{
-        background: linear-gradient(135deg, #9b51e0 0%, #7b38a0 100%) !important;
-        color: white !important;
-        border-radius: 14px !important;
-        font-size: 1.05rem !important;
-        font-weight: 600 !important;
-        border: none !important;
-        width: 100% !important;
-        padding: 12px 24px !important;
-        box-shadow: 0 10px 25px rgba(123, 56, 160, 0.35) !important;
-        transition: all 0.3s ease;
-    }}
-
-    div.stButton > button:hover, div.stFormSubmitButton > button:hover {{
-        background: linear-gradient(135deg, #a862e8 0%, #8e42b8 100%) !important;
-        box-shadow: cmyk(0, 15px 30px rgba(142, 66, 184, 0.5)) !important;
-        transform: translateY(-2px);
-    }}
-
-    /* Tab di navigazione */
-    .stTabs [data-baseweb="tab"] {{
-        background-color: rgba(155, 81, 224, 0.1);
-        border-radius: 20px !important;
-        color: #5c3a72;
-        font-weight: 600;
-        padding: 8px 20px !important;
-        border: 1px solid #dcd0e8 !important;
-        margin-right: 8px;
-    }}
-
-    .stTabs [aria-selected="true"] {{
-        background: linear-gradient(135deg, #9b51e0 0%, #7b38a0) !important;
-        color: #ffffff !important;
-        box-shadow: 0 6px 20px rgba(123, 56, 160, 0.4) !important;
-    }}
-
-    /* Sidebar Admin */
-    [data-testid="stSidebar"] {{
-        background: linear-gradient(180deg, #3d1b52 0%, #1a0826 100%) !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
-    }}
-    [data-testid="stSidebar"] label, [data-testid="stSidebar"] span {{
-        color: #f3e5f5 !important;
-    }}
-    </style>
-""",
-    unsafe_allow_html=True,
-)
-
-
-# Connessione Database Supabase / PostgreSQL[cite: 1]
-@st.cache_resource
-def get_db_engine():
-  db_url = st.secrets["supabase"]["db_url"]
-  return create_engine(db_url, pool_pre_ping=True)
-
-
-engine = get_db_engine()
-
-
-@st.cache_resource
-def init_db():
-  with engine.begin() as conn:
-    conn.execute(
-        text("""
-            CREATE TABLE IF NOT EXISTS prenotazioni (
-                id SERIAL PRIMARY KEY,
-                nome TEXT NOT NULL,
-                data TEXT NOT NULL,
-                ora TEXT NOT NULL,
-                trattamento TEXT NOT NULL,
-                data_creazione TEXT NOT NULL,
-                device_id TEXT,
-                stato_presenza TEXT DEFAULT 'Assente',
-                codice_fiscale TEXT,
-                codice_fiscale_2 TEXT
-            )
-        """)
-    )
-
-    for col, col_type in [
-        ("device_id", "TEXT"),
-        ("stato_presenza", "TEXT DEFAULT 'Assente'"),
-        ("codice_fiscale", "TEXT"),
-        ("codice_fiscale_2", "TEXT"),
-    ]:
-      try:
-        conn.execute(
-            text(f"ALTER TABLE prenotazioni ADD COLUMN IF NOT EXISTS {col} {col_type}")
-        )
-      except Exception:
-        pass
-
-    conn.execute(
-        text("""
-            CREATE TABLE IF NOT EXISTS banned_devices (
-                device_id TEXT PRIMARY KEY
-            )
-        """)
-    )
-
-    conn.execute(
-        text("""
-            CREATE TABLE IF NOT EXISTS utenti (
-                id SERIAL PRIMARY KEY,
-                nome TEXT NOT NULL,
-                cognome TEXT NOT NULL,
-                codice_fiscale TEXT NOT NULL UNIQUE,
-                password_salt TEXT NOT NULL,
-                password_hash TEXT NOT NULL,
-                data_registrazione TEXT NOT NULL
-            )
-        """)
+# Funzione per caricare e impostare lo sfondo in formato Base64
+def set_background(png_file):
+  try:
+    with open(png_file, "rb") as f:
+      encoded_string = base64.b64encode(f.read()).decode()
+    css = f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/png;base64,{encoded_string}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }}
+        /* Personalizzazione della card centrale */
+        .login-container {{
+            background-color: rgba(255, 255, 255, 0.90);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-width: 480px;
+            margin: 2rem auto;
+            color: #4a3b5c;
+            font-family: sans-serif;
+        }}
+        .brand-title {{
+            text-align: center;
+            color: #4A2E6B;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 2px;
+            letter-spacing: 0.5px;
+        }}
+        .title-text {{
+            text-align: center;
+            color: #5C4378;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }}
+        .subtitle-text {{
+            text-align: center;
+            color: #7a688d;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }}
+        .icon-header {{
+            text-align: center;
+            font-size: 30px;
+            margin-bottom: 10px;
+        }}
+        /* Stile personalizzato per i pulsanti per richiamare il brand */
+        div.stButton > button:first-child {{
+            background-color: #8E44AD;
+            color: white;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+        }}
+        div.stButton > button:first-child:hover {{
+            background-color: #732D91;
+            color: white;
+        }}
+        </style>
+        """
+    st.markdown(css, unsafe_allow_html=True)
+  except FileNotFoundError:
+    st.error(
+        "Attenzione: Impossibile trovare il file 'background.png' nella"
+        " cartella principale di GitHub."
     )
 
 
-init_db()
+# Applica lo sfondo
+set_background("background.png")
 
+# Layout centrato (ottimizzato sia per PC che per mobile)
+col1, col2, col3 = st.columns([1, 3.5, 1])
 
-def elimina_prenotazioni_passate():
-  try:
-    local_tz = ZoneInfo("Europe/Rome")
-    oggi_str = datetime.now(local_tz).strftime("%Y-%m-%d")
-  except Exception:
-    oggi_str = datetime.now().strftime("%Y-%m-%d")
+with col2:
+  # Container visivo principale (stile card)
+  st.markdown('<div class="login-container">', unsafe_allow_html=True)
 
-  with engine.begin() as conn:
-    conn.execute(
-        text("DELETE FROM prenotazioni WHERE data < :oggi"), {"oggi": oggi_str}
-    )
-
-
-elimina_prenotazioni_passate()
-
-
-def hash_password(password, salt=None):
-  if salt is None:
-    salt = secrets.token_hex(16)
-  pwd_hash = hashlib.pbkdf2_hmac(
-      "sha256", password.encode("utf-8"), salt.encode("utf-8"), 100_000
-  ).hex()
-  return salt, pwd_hash
-
-
-def verifica_password(password, salt, pwd_hash_atteso):
-  _, pwd_hash_calcolato = hash_password(password, salt)
-  return secrets.compare_digest(pwd_hash_calcolato, pwd_hash_atteso)
-
-
-def registra_utente(nome, cognome, cf, password):
-  salt, pwd_hash = hash_password(password)
-  data_reg = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-  try:
-    with engine.begin() as conn:
-      res = conn.execute(
-          text("SELECT id FROM utenti WHERE codice_fiscale = :cf"),
-          {"cf": cf.upper()},
-      ).fetchone()
-      if res:
-        return False, "Esiste già un utente registrato con questo Codice Fiscale."
-      conn.execute(
-          text("""
-                    INSERT INTO utenti (nome, cognome, codice_fiscale, password_salt, password_hash, data_registrazione) 
-                    VALUES (:nome, :cognome, :cf, :salt, :pwd_hash, :data_reg)
-                """),
-          {
-              "nome": nome.title(),
-              "cognome": cognome.title(),
-              "cf": cf.upper(),
-              "salt": salt,
-              "pwd_hash": pwd_hash,
-              "data_reg": data_reg,
-          },
-      )
-    return True, "Registrazione completata con successo!"
-  except Exception as e:
-    return False, str(e)
-
-
-def login_utente(nome, cognome, password):
-  try:
-    with engine.begin() as conn:
-      res = conn.execute(
-          text("""
-                    SELECT id, nome, cognome, codice_fiscale, password_salt, password_hash 
-                    FROM utenti 
-                    WHERE UPPER(nome) = :nome AND UPPER(cognome) = :cognome
-                """),
-          {"nome": nome.strip().upper(), "cognome": cognome.strip().upper()},
-      ).fetchone()
-      if res:
-        uid, u_nome, u_cognome, u_cf, salt, pwd_hash = res
-        if verifica_password(password, salt, pwd_hash):
-          return {
-              "id": uid,
-              "nome": u_nome,
-              "cognome": u_cognome,
-              "codice_fiscale": u_cf,
-          }, None
-      return None, "Credenziali non valide."
-  except Exception as e:
-    return None, str(e)
-
-
-def aggiorna_password_utente(nome, cognome, cf, nuova_password):
-  try:
-    with engine.begin() as conn:
-      res = conn.execute(
-          text("""
-                    SELECT id FROM utenti 
-                    WHERE UPPER(nome) = :nome AND UPPER(cognome) = :cognome AND UPPER(codice_fiscale) = :cf
-                """),
-          {
-              "nome": nome.strip().upper(),
-              "cognome": cognome.strip().upper(),
-              "cf": cf.strip().upper(),
-          },
-      ).fetchone()
-      if not res:
-        return False, "Nessun account trovato con i dati inseriti."
-      uid = res[0]
-      salt, pwd_hash = hash_password(nuova_password)
-      conn.execute(
-          text(
-              "UPDATE utenti SET password_salt = :salt, password_hash ="
-              " :pwd_hash WHERE id = :id"
-          ),
-          {"salt": salt, "pwd_hash": pwd_hash, "id": uid},
-      )
-    return True, "Password reimpostata con successo!"
-  except Exception as e:
-    return False, str(e)
-
-
-def get_orari_per_data(data):
-  if isinstance(data, str):
-    d = datetime.strptime(data, "%Y-%m-%d").date()
-  else:
-    d = data
-  weekday = d.weekday()
-  if weekday == 5:
-    return ["09:00", "10:00", "11:00", "12:00", "15:00", "16:00", "17:00"]
-  elif weekday == 6:
-    return []
-  else:
-    return [
-        "09:00",
-        "10:00",
-        "11:00",
-        "12:00",
-        "14:00",
-        "15:00",
-        "16:00",
-        "17:00",
-        "18:00",
-        "19:00",
-    ]
-
-
-def get_client_device_id():
-  if "device_id_internale" not in st.session_state:
-    if "dev_id" in st.query_params and st.query_params["dev_id"].strip():
-      st.session_state["device_id_internale"] = (
-          f"device_{st.query_params['dev_id']}"
-      )
-    else:
-      unique_id = str(uuid.uuid4()).replace("-", "")[:24]
-      st.query_params["dev_id"] = unique_id
-      st.session_state["device_id_internale"] = f"device_{unique_id}"
-  return st.session_state["device_id_internale"]
-
-
-def get_current_time_local():
-  try:
-    local_tz = ZoneInfo("Europe/Rome")
-    return datetime.now(local_tz)
-  except Exception:
-    return datetime.now()
-
-
-@st.dialog("📜 Regolamento di Lola's Glam House")
-def popup_regolamento():
-  st.markdown("""
-        * ⏱️ **Puntualità:** Si raccomanda di arrivare puntuali all'appuntamento.
-        * ⏱️ **Disdette:** Si richiede un preavviso minimo di 24 ore per la cancellazione.
-        * ✨ **Trattamenti:** I nostri servizi sono pensati per valorizzare la tua bellezza naturale.
-    """)
-  if st.button("✨ Ho letto e accetto", use_container_width=True):
-    st.session_state["regolamento_accettato"] = True
-    st.session_state["mostra_dialog_regolamento"] = False
-    st.rerun()
-
-
-CATALOGO_SERVIZI = {
-    "💅 UNGHIE": ["Mani", "Piedi", "Semipermanente o gel", "Refil", "Ricostruzione"],
-    "👁️ CIGLIA": ["Montaggio", "Smontaggio", "Refil"],
-    "💇‍♀️ CAPELLI": [
-        "Taglio",
-        "Colore",
-        "Piega",
-        "Taglio + Piega",
-        "Taglio + Colore + Piega",
-        "Colore + Piega",
-        "Acconciatura",
-        "Meches",
-        "Balayage",
-        "Permanente",
-    ],
-    "💆‍♀️ MASSAGGIO": ["Relax", "Anticellulite", "Scrub"],
-    "✨ SOPRACCIGLIA": ["Pinzetta"],
-    "🪞 CERETTA": [
-        "Gambe intere",
-        "Metà gambe",
-        "Addome",
-        "Petto",
-        "Inguine",
-        "Baffetti",
-        "Braccia",
-        "Ascelle",
-        "Schiena",
-        "Total body",
-    ],
-    "🌸 VISO": [
-        "Pulizia viso",
-        "Massaggio antirughe",
-        "Trattamento viso con spatola ultrasuoni",
-    ],
-}
-
-logo_path = None
-for possible_name in ["logo.png", "logo.PNG", "logo.jpg", "logo.jpeg"]:
-  if os.path.exists(possible_name):
-    logo_path = possible_name
-    break
-
-# --- BARRA LATERALE ADMIN ---
-st.sidebar.title("🔐 Area Admin")
-ADMIN_PASSWORD = st.secrets.get("admin_password", "GlamHouse2026")
-
-if "admin_logged_in" not in st.session_state:
-  st.session_state["admin_logged_in"] = False
-
-if not st.session_state["admin_logged_in"]:
-  admin_pass = st.sidebar.text_input(
-      "Password Admin", type="password", key="admin_pwd_input"
+  st.markdown('<div class="icon-header">✨</div>', unsafe_allow_html=True)
+  st.markdown(
+      '<div class="brand-title">Lola\'s Glam House</div>',
+      unsafe_allow_html=True,
   )
-  if admin_pass == ADMIN_PASSWORD:
-    st.session_state["admin_logged_in"] = True
-    st.rerun()
-  elif admin_pass != "":
-    st.sidebar.error("Password errata!")
+  st.markdown(
+      '<div class="title-text">Area Admin</div>', unsafe_allow_html=True
+  )
+  st.markdown(
+      '<div class="subtitle-text">Inserisci le tue credenziali per'
+      " accedere</div>",
+      unsafe_allow_html=True,
+  )
 
-if st.session_state["admin_logged_in"]:
-  st.sidebar.success("Accesso Admin attivo")
-  if st.sidebar.button("🚪 Esci dall'Area Admin"):
-    st.session_state["admin_logged_in"] = False
-    st.rerun()
-
-# --- VISTA 1: PANNELLO AMMINISTRATORE ---
-if st.session_state["admin_logged_in"]:
-  st.title("✨ Lola's Glam House - Admin Panel")
-
-  if st.button("🔄 Aggiorna Dati"):
-    st.rerun()
-
-  st.markdown("<br>", unsafe_allow_html=True)
-
-  with st.container(border=True):
-    st.subheader("📋 Elenco Prenotazioni Attive")
-    df = pd.read_sql_query(
-        "SELECT id, codice_fiscale, data, ora, trattamento, device_id FROM"
-        " prenotazioni ORDER BY data DESC, ora ASC",
-        engine,
-    )
-    if not df.empty:
-      st.dataframe(df, use_container_width=True)
-    else:
-      st.info("Nessuna prenotazione presente.")
-
-  with st.container(border=True):
-    st.subheader("🔓 Gestione Chiusure Agenda")
-    data_intervallo = st.date_input(
-        "Data o Intervallo",
-        value=(datetime.today(), datetime.today()),
-        min_value=datetime.today(),
-    )
-    modo_intervallo = st.radio("Ambito", ["Tutta la giornata", "Orario specifico"])
-
-    TUTTI_GLI_ORARI_ADMIN = [
-        "09:00",
-        "10:00",
-        "11:00",
-        "12:00",
-        "14:00",
-        "15:00",
-        "16:00",
-        "17:00",
-        "18:00",
-        "19:00",
-    ]
-    ora_intervallo = (
-        st.selectbox("Orario", TUTTI_GLI_ORARI_ADMIN)
-        if modo_intervallo == "Orario specifico"
-        else None
+  # Form di login
+  with st.form("login_form"):
+    nome = st.text_input("Nome", placeholder="Inserisci il tuo nome")
+    cognome = st.text_input("Cognome", placeholder="Inserisci il tuo cognome")
+    password = st.text_input(
+        "Password", type="password", placeholder="Inserisci la tua password"
     )
 
-    col_b1, col_b2 = st.columns(2)
-    with col_b1:
-      btn_blocca = st.button("🔒 Blocca")
-    with col_b2:
-      btn_sblocca = st.button("🔓 Sblocca")
-
-    if btn_blocca or btn_sblocca:
-      lista_date = (
-          [str(data_intervallo)]
-          if not isinstance(data_intervallo, tuple)
-          else [str(d) for d in data_intervallo]
-      )
-      ora_attuale_str = get_current_time_local().strftime("%Y-%m-%d %H:%M")
-      with engine.begin() as conn:
-        if btn_blocca:
-          for d_str in lista_date:
-            if modo_intervallo == "Tutta la giornata":
-              for h in get_orari_per_data(d_str):
-                conn.execute(
-                    text(
-                        "INSERT INTO prenotazioni (nome, data, ora, trattamento,"
-                        " data_creazione, device_id, stato_presenza) VALUES"
-                        " (:n, :d, :o, :t, :dc, :di, :sp)"
-                    ),
-                    {
-                        "n": "🔒 CHIUSO",
-                        "d": d_str,
-                        "o": h,
-                        "t": "Chiusura Admin",
-                        "dc": ora_attuale_str,
-                        "di": "SYSTEM",
-                        "sp": "Chiuso",
-                    },
-                )
-            else:
-              conn.execute(
-                  text(
-                      "INSERT INTO prenotazioni (nome, data, ora, trattamento,"
-                      " data_creazione, device_id, stato_presenza) VALUES"
-                      " (:n, :d, :o, :t, :dc, :di, :sp)"
-                  ),
-                  {
-                      "n": "🔒 CHIUSO",
-                      "d": lista_date[0],
-                      "o": ora_intervallo,
-                      "t": "Chiusura Admin",
-                      "dc": ora_attuale_str,
-                      "di": "SYSTEM",
-                      "sp": "Chiuso",
-                  },
-              )
-          st.success("Blocco applicato!")
-        elif btn_sblocca:
-          for d_str in lista_date:
-            if modo_intervallo == "Tutta la giornata":
-              conn.execute(
-                  text("DELETE FROM prenotazioni WHERE data = :d"), {"d": d_str}
-              )
-            else:
-              conn.execute(
-                  text(
-                      "DELETE FROM prenotazioni WHERE data = :d AND ora = :o"
-                  ),
-                  {"d": d_str, "o": ora_intervallo},
-              )
-          st.success("Sblocco applicato!")
-      st.rerun()
-
-  with st.container(border=True):
-    st.subheader("🛡️ Gestione Cancellazioni")
-    id_da_eliminare = st.number_input(
-        "ID Prenotazione da eliminare", min_value=0, step=1
+    st.markdown(
+        '<p style="font-size: 13px; text-align: left; margin-bottom:'
+        ' 15px;">Non hai un account? <a href="#" target="_self"'
+        ' style="color: #8E44AD; text-decoration: none; font-weight:'
+        ' bold;">Registrati</a></p>',
+        unsafe_allow_html=True,
     )
-    if st.button("Elimina Prenotazione"):
-      if id_da_eliminare > 0:
-        with engine.begin() as conn:
-          conn.execute(
-              text("DELETE FROM prenotazioni WHERE id = :id"),
-              {"id": id_da_eliminare},
-          )
-        st.success("Eliminata!")
-        st.rerun()
 
-  with st.container(border=True):
-    st.subheader("👤 Clienti Registrati")
-    df_utenti = pd.read_sql_query(
-        "SELECT id, nome, cognome, codice_fiscale, data_registrazione FROM"
-        " utenti",
-        engine,
+    # Pulsanti
+    submit_btn = st.form_submit_button("Accedi", use_container_width=True)
+    forgot_btn = st.form_submit_button(
+        "Password dimenticata?", use_container_width=True
     )
-    if not df_utenti.empty:
-      st.dataframe(df_utenti, use_container_width=True)
 
-# --- VISTA 2: PAGINA PRINCIPALE CLIENTE (SPLIT LAYOUT NATIVO) ---
-else:
-  client_device_id = get_client_device_id()
-  with engine.begin() as conn:
-    is_banned = conn.execute(
-        text("SELECT device_id FROM banned_devices WHERE device_id = :dev_id"),
-        {"dev_id": client_device_id},
-    ).fetchone()
-
-  if is_banned:
-    st.error("⛔ Accesso negato.")
-  else:
-    # Creazione delle due colonne affiancate
-    col_left, col_right = st.columns([1, 1], gap="large")
-
-    with col_left:
-      if logo_path and os.path.exists(logo_path):
-        st.image(logo_path, width=130)
+    if submit_btn:
+      # Logica di controllo (qui andrà integrato Supabase auth)
+      if nome and cognome and password:
+        st.success(f"Benvenuta in Lola's Glam House, {nome} {cognome}!")
       else:
-        st.markdown(
-            "### ✨ Lola's Glam House ✨",
-            unsafe_allow_html=True,
-        )
+        st.warning("Compila tutti i campi per procedere.")
 
-      st.markdown("### Lola's Glam House")
-      st.markdown(
-          "<p style='color: #f3e5f5 !important; font-size: 0.95rem;'>Gestisci il"
-          " tuo centro estetico e le tue prenotazioni in modo semplice ed"
-          " efficace.</p>",
-          unsafe_allow_html=True,
-      )
+    if forgot_btn:
+      st.info("Funzione di recupero password in arrivo.")
 
-      st.markdown("<br>", unsafe_allow_html=True)
-      st.markdown(
-          "📅 **Agenda Intelligente**<br><small style='color: #e1bee7;'>Gestisci"
-          " appuntamenti, clienti e promemoria in un unico calendario.</small>",
-          unsafe_allow_html=True,
-      )
-      st.markdown("<br>", unsafe_allow_html=True)
-      st.markdown(
-          "✨ **Trattamenti Esclusivi**<br><small style='color:"
-          " #e1bee7;'>Scegli tra un'ampia gamma di servizi per la cura della"
-          " persona.</small>",
-          unsafe_allow_html=True,
-      )
-      st.markdown("<br>", unsafe_allow_html=True)
-      st.markdown(
-          "🔒 **Massima Sicurezza**<br><small style='color:"
-          " #e1bee7;'>Accesso riservato e protetto per ogni cliente e"
-          " amministratore.</small>",
-          unsafe_allow_html=True,
-      )
-
-      st.markdown("<br><br>", unsafe_allow_html=True)
-      st.markdown(
-          "<p style='text-align: center; font-style: italic; color:"
-          " #f8bbd0;'>“La bellezza inizia dal benessere.”</p>",
-          unsafe_allow_html=True,
-      )
-
-    with col_right:
-      if "utente_loggato" not in st.session_state:
-        st.markdown(
-            "### 🔓 Accedi o Registrati",
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            "<p style='font-size: 0.9rem; margin-bottom: 20px;'>Inserisci le tue"
-            " credenziali per accedere all'area riservata</p>",
-            unsafe_allow_html=True,
-        )
-
-        tab_login, tab_registrazione = st.tabs(["🔑 Accedi", "📝 Registrati"])
-
-        with tab_login:
-          if st.session_state.get("vista_recupero", False):
-            st.markdown("##### 🔑 Reimposta Password")
-            with st.form("form_recupero"):
-              rec_nome = st.text_input("Nome *")
-              rec_cognome = st.text_input("Cognome *")
-              rec_cf = st.text_input("Codice Fiscale *")
-              rec_nuova_pw = st.text_input("Nuova Password *", type="password")
-              rec_conf_pw = st.text_input(
-                  "Conferma Password *", type="password"
-              )
-
-              col_r1, col_r2 = st.columns(2)
-              with col_r1:
-                submit_rec = st.form_submit_button("Aggiorna")
-              with col_r2:
-                submit_ind = st.form_submit_button("Indietro")
-
-              if submit_ind:
-                st.session_state["vista_recupero"] = False
-                st.rerun()
-              if submit_rec:
-                if rec_nuova_pw != rec_conf_pw:
-                  st.error("Le password non coincidono.")
-                else:
-                  succ, msg = aggiorna_password_utente(
-                      rec_nome, rec_cognome, rec_cf, rec_nuova_pw
-                  )
-                  if succ:
-                    st.success(msg)
-                    st.session_state["vista_recupero"] = False
-                    st.rerun()
-                  else:
-                    st.error(msg)
-          else:
-            with st.form("form_login"):
-              login_nome = st.text_input("Nome *")
-              login_cognome = st.text_input("Cognome *")
-              login_password = st.text_input("Password *", type="password")
-
-              col_l1, col_l2 = st.columns(2)
-              with col_l1:
-                submit_log = st.form_submit_button("Accedi")
-              with col_l2:
-                submit_rec_click = st.form_submit_button("Password dimenticata?")
-
-              if submit_log:
-                utente, err = login_utente(
-                    login_nome, login_cognome, login_password
-                )
-                if utente:
-                  st.session_state["utente_loggato"] = utente
-                  st.rerun()
-                else:
-                  st.error(err)
-              elif submit_rec_click:
-                st.session_state["vista_recupero"] = True
-                st.rerun()
-
-        with tab_registrazione:
-          with st.form("form_reg"):
-            reg_nome = st.text_input("Nome *")
-            reg_cognome = st.text_input("Cognome *")
-            reg_cf = st.text_input("Codice Fiscale *")
-            reg_password = st.text_input("Password *", type="password")
-            reg_password_conf = st.text_input(
-                "Conferma Password *", type="password"
-            )
-            submit_reg = st.form_submit_button("Crea Account")
-
-            if submit_reg:
-              if reg_password != reg_password_conf:
-                st.error("Le password non coincidono.")
-              else:
-                succ, msg = registra_utente(
-                    reg_nome, reg_cognome, reg_cf, reg_password
-                )
-                if succ:
-                  st.success(msg)
-                else:
-                  st.error(msg)
-
-      else:
-        ul = st.session_state["utente_loggato"]
-        st.markdown(
-            f"### Benvenuta/o, {ul['nome']} 💖",
-            unsafe_allow_html=True,
-        )
-
-        tab1, tab2, tab3 = st.tabs(["📅 Prenota", "ℹ️ Info", "📜 Regolamento"])
-
-        if st.session_state.get("mostra_dialog_regolamento", False):
-          popup_regolamento()
-
-        if (
-            st.session_state.get("regolamento_accettato", False)
-            and "pending_booking" in st.session_state
-        ):
-          pb = st.session_state["pending_booking"]
-          data_creazione_str = get_current_time_local().strftime("%Y-%m-%d %H:%M")
-          with engine.begin() as conn:
-            conn.execute(
-                text(
-                    "INSERT INTO prenotazioni (nome, data, ora, trattamento,"
-                    " data_creazione, device_id, stato_presenza, codice_fiscale,"
-                    " codice_fiscale_2) VALUES (:n, :d, :o, :t, :dc, :di, :sp,"
-                    " :cf1, :cf2)"
-                ),
-                {
-                    "n": pb["nome_completo"],
-                    "d": str(pb["data_scelta"]),
-                    "o": pb["ora_scelta"],
-                    "t": pb["trattamento"],
-                    "dc": data_creazione_str,
-                    "di": pb["client_device_id"],
-                    "sp": "Assente",
-                    "cf1": pb["cf_principale"],
-                    "cf2": pb["cf_secondario"],
-                },
-            )
-          st.session_state["booking_success_msg"] = (
-              "🎉 Prenotazione confermata con successo!"
-          )
-          del st.session_state["pending_booking"]
-          st.session_state["regolamento_accettato"] = False
-          st.rerun()
-
-        with tab1:
-          if "booking_success_msg" in st.session_state:
-            st.success(st.session_state["booking_success_msg"])
-            if st.button("Nuova Prenotazione"):
-              del st.session_state["booking_success_msg"]
-              st.rerun()
-          else:
-            categoria_scelta = st.selectbox(
-                "Categoria Trattamento *", list(CATALOGO_SERVIZI.keys())
-            )
-            servizi_disponibili = CATALOGO_SERVIZI[categoria_scelta]
-            trattamento_specifico = st.selectbox(
-                "Servizio Specifico *", servizi_disponibili
-            )
-
-            trattamento_completo = (
-                f"{categoria_scelta.split(' ')[1]} - {trattamento_specifico}"
-            )
-
-            data_scelta = st.date_input("Data *", min_value=datetime.today())
-
-            orari_disponibili = [h for h in get_orari_per_data(data_scelta)]
-            ora_scelta = (
-                st.selectbox("Orario *", orari_disponibili)
-                if orari_disponibili
-                else None
-            )
-
-            submitted = st.button("Conferma Prenotazione")
-            if submitted:
-              if not ora_scelta:
-                st.error(
-                    "Seleziona un orario valido (giorno chiuso o non"
-                    " disponibile)."
-                )
-              else:
-                st.session_state["pending_booking"] = {
-                    "nome_completo": f"{ul['nome']} {ul['cognome']}",
-                    "data_scelta": data_scelta,
-                    "ora_scelta": ora_scelta,
-                    "trattamento": trattamento_completo,
-                    "client_device_id": client_device_id,
-                    "cf_principale": ul["codice_fiscale"],
-                    "cf_secondario": None,
-                }
-                st.session_state["mostra_dialog_regolamento"] = True
-                st.rerun()
-
-        with tab2:
-          st.markdown("#### Info Studio")
-          st.write(
-              "Benvenuta nel mondo di Lola's Glam House, dove la cura della"
-              " persona incontra l'eleganza e la professionalità."
-          )
-
-        with tab3:
-          st.markdown("#### Regolamento")
-          st.write(
-              "Consulta i nostri termini di servizio per vivere un'esperienza"
-              " rilassante e impeccabile."
-          )
-
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🚪 Esci"):
-          del st.session_state["utente_loggato"]
-          st.rerun()
+  st.markdown("</div>", unsafe_allow_html=True)
