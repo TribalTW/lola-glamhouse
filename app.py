@@ -19,7 +19,7 @@ st.set_page_config(
 )
 
 
-# Funzione per convertire l'immagine di sfondo in base64 (per caricarla perfettamente su Streamlit Cloud)
+# Funzione per convertire l'immagine di sfondo in base64
 def get_base64_image(image_path):
   if os.path.exists(image_path):
     with open(image_path, "rb") as f:
@@ -28,7 +28,6 @@ def get_base64_image(image_path):
   return None
 
 
-# Cerca l'immagine di sfondo salvata nella cartella
 bg_base64 = None
 for possible_bg in [
     "background.png",
@@ -40,13 +39,18 @@ for possible_bg in [
   if bg_base64:
     break
 
-# Stile CSS Avanzato: Sfondo personalizzato con animazione e Glassmorphism
+# Stile CSS Avanzato: Sfondo animato, Glassmorphism e pulsanti interattivi
 bg_css_style = (
     f"""
+    @keyframes glamShimmer {{
+        0% {{ background-position: 0% 50%; }}
+        50% {{ background-position: 100% 50%; }}
+        100% {{ background-position: 0% 50%; }}
+    }}
     .stApp {{
-        background-image: linear-gradient(rgba(40, 20, 50, 0.3), rgba(40, 20, 50, 0.3)), url("data:image/png;base64,{bg_base64}");
-        background-size: cover;
-        background-position: center;
+        background-image: linear-gradient(rgba(45, 20, 60, 0.35), rgba(30, 10, 45, 0.45)), url("data:image/png;base64,{bg_base64}");
+        background-size: 200% 200%;
+        animation: glamShimmer 20s ease infinite;
         background-attachment: fixed;
         font-family: 'Inter', sans-serif;
     }}
@@ -65,90 +69,79 @@ st.markdown(
     <style>
     {bg_css_style}
 
-    /* Effetto Glassmorphism per i container (semi-trasparenti ed eleganti) */
+    /* Glassmorphism avanzato per i container */
     div.stVerticalBlockBorderWrapper, div[data-testid="stVerticalBlockBorderWrapper"] {{
-        background: rgba(255, 255, 255, 0.15) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
+        background: rgba(255, 255, 255, 0.12) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        border-radius: 20px !important;
-        padding: 24px !important;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2) !important;
-    }
+        border-radius: 24px !important;
+        padding: 26px !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+    }}
 
     div[data-testid="stVerticalBlockBorderWrapper"] div {{
         background-color: transparent !important;
-    }
+    }}
 
-    /* Campi di input in stile vetro sfumato */
+    /* Campi di input */
     .stTextInput input, .stSelectbox > div > div, .stDateInput input, .stNumberInput input {{
         background-color: rgba(255, 255, 255, 0.85) !important;
-        border-radius: 10px !important;
+        border-radius: 12px !important;
         border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
         padding: 10px 14px !important;
         color: #2c163a !important;
+        font-weight: 500;
     }}
 
-    /* Pulsanti eleganti in linea con il brand glam */
+    /* Pulsanti con animazioni e sfumature glam */
     div.stButton > button, div.stDownloadButton > button, div.stFormSubmitButton > button {{
-        background: linear-gradient(135deg, #b070d8 0%, #7b38a0 100%) !important;
+        background: linear-gradient(135deg, #b070d8 0%, #7b38a0 50%, #9c27b0 100%) !important;
         color: white !important;
-        border-radius: 12px !important;
+        border-radius: 14px !important;
         font-size: 1.05rem !important;
         font-weight: 600 !important;
         border: 1px solid rgba(255, 255, 255, 0.4) !important;
         width: 100% !important;
         padding: 12px 24px !important;
-        box-shadow: 0 8px 20px rgba(123, 56, 160, 0.4) !important;
-        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(123, 56, 160, 0.45) !important;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     }}
 
     div.stButton > button:hover, div.stFormSubmitButton > button:hover {{
-        background: linear-gradient(135deg, #c48de8 0%, #8e42b8 100%) !important;
-        box-shadow: 0 10px 25px rgba(123, 56, 160, 0.6) !important;
-        transform: translateY(-2px);
+        background: linear-gradient(135deg, #c48de8 0%, #8e42b8 50%, #ab47bc 100%) !important;
+        box-shadow: 0 12px 30px rgba(142, 66, 184, 0.7) !important;
+        transform: translateY(-3px) scale(1.01);
     }}
 
-    /* Tipografia e Titoli luminosi */
+    /* Tipografia */
     h1, h2, h3, h4 {{
-        color: #f3e5f5 !important;
+        color: #fce4ec !important;
         font-weight: 700 !important;
         text-align: center;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
     }}
 
     p, span, label, .stMarkdown {{
-        color: #fce4ec !important;
+        color: #f3e5f5 !important;
     }}
 
-    /* Box informativo sfumato */
-    .box-info-carino {{
-        background: rgba(255, 255, 255, 0.2) !important;
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.4) !important;
-        border-radius: 14px !important;
-        padding: 16px 20px !important;
-        margin-bottom: 20px !important;
-        text-align: center !important;
-        color: #ffffff !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
-    }
-
-    /* Stile Tab a capsula glam */
+    /* Tab personalizzate */
     .stTabs [data-baseweb="tab"] {
-        background-color: rgba(255, 255, 255, 0.15);
+        background-color: rgba(255, 255, 255, 0.12);
         border-radius: 30px !important;
         color: #f3e5f5;
         font-weight: 600;
         padding: 10px 24px !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border: 1px solid rgba(255, 255, 255, 0.25) !important;
+        transition: all 0.3s ease;
     }
 
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #b070d8 0%, #7b38a0) !important;
         color: #ffffff !important;
         border-color: rgba(255, 255, 255, 0.6) !important;
-        box-shadow: 0 4px 15px rgba(123, 56, 160, 0.5) !important;
+        box-shadow: 0 6px 20px rgba(123, 56, 160, 0.6) !important;
     }
 
     #MainMenu {visibility: hidden;}
@@ -158,7 +151,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Connessione a Supabase / PostgreSQL con caching delle risorse
+
+# Connessione Database Supabase / PostgreSQL
 @st.cache_resource
 def get_db_engine():
   db_url = st.secrets["supabase"]["db_url"]
@@ -168,7 +162,6 @@ def get_db_engine():
 engine = get_db_engine()
 
 
-# Inizializzazione Database PostgreSQL / Supabase
 @st.cache_resource
 def init_db():
   with engine.begin() as conn:
@@ -228,7 +221,6 @@ def init_db():
 init_db()
 
 
-# Cancellazione automatica delle prenotazioni dei giorni passati
 def elimina_prenotazioni_passate():
   try:
     local_tz = ZoneInfo("Europe/Rome")
@@ -245,132 +237,7 @@ def elimina_prenotazioni_passate():
 elimina_prenotazioni_passate()
 
 
-# Funzioni di supporto per la verifica del Codice Fiscale
-def estrai_consonanti_vocali(testo):
-  testo = testo.upper()
-  consonanti = "".join([c for c in testo if c.isalpha() and c not in "AEIOU"])
-  vocali = "".join([c for c in testo if c.isalpha() and c in "AEIOU"])
-  return consonanti, vocali
-
-
-def calcola_iniziali_cf(cognome, nome):
-  c_cons, c_voc = estrai_consonanti_vocali(cognome)
-  cognome_cf = (c_cons + c_voc + "XXX")[:3]
-  n_cons, n_voc = estrai_consonanti_vocali(nome)
-  if len(n_cons) >= 4:
-    nome_cf = n_cons[0] + n_cons[2] + n_cons[3]
-  else:
-    nome_cf = (n_cons + n_voc + "XXX")[:3]
-  return cognome_cf, nome_cf
-
-
-_VALORI_DISPARI = {
-    "0": 1,
-    "1": 0,
-    "2": 5,
-    "3": 7,
-    "4": 9,
-    "5": 13,
-    "6": 15,
-    "7": 17,
-    "8": 19,
-    "9": 21,
-    "A": 1,
-    "B": 0,
-    "C": 5,
-    "D": 7,
-    "E": 9,
-    "F": 13,
-    "G": 15,
-    "H": 17,
-    "I": 19,
-    "J": 21,
-    "K": 2,
-    "L": 4,
-    "M": 18,
-    "N": 20,
-    "O": 11,
-    "P": 3,
-    "Q": 6,
-    "R": 8,
-    "S": 12,
-    "T": 14,
-    "U": 16,
-    "V": 10,
-    "W": 22,
-    "X": 25,
-    "Y": 24,
-    "Z": 23,
-}
-_VALORI_PARI = {
-    "0": 0,
-    "1": 1,
-    "2": 2,
-    "3": 3,
-    "4": 4,
-    "5": 5,
-    "6": 6,
-    "7": 7,
-    "8": 8,
-    "9": 9,
-    "A": 0,
-    "B": 1,
-    "C": 2,
-    "D": 3,
-    "E": 4,
-    "F": 5,
-    "G": 6,
-    "H": 7,
-    "I": 8,
-    "J": 9,
-    "K": 10,
-    "L": 11,
-    "M": 12,
-    "N": 13,
-    "O": 14,
-    "P": 15,
-    "Q": 16,
-    "R": 17,
-    "S": 18,
-    "T": 19,
-    "U": 20,
-    "V": 21,
-    "W": 22,
-    "X": 23,
-    "Y": 24,
-    "Z": 25,
-}
-_LETTERE_RESTO = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-
-def calcola_carattere_controllo_cf(cf_15):
-  totale = 0
-  for i, carattere in enumerate(cf_15):
-    posizione = i + 1
-    if posizione % 2 != 0:
-      totale += _VALORI_DISPARI[carattere]
-    else:
-      totale += _VALORI_PARI[carattere]
-  return _LETTERE_RESTO[totale % 26]
-
-
-def valida_codice_fiscale(nome, cognome, cf):
-  cf = cf.strip().upper()
-  regex_cf = r"^[A-Z]{6}[0-9]{2}[ABCDEHLMPRST][0-9]{2}[A-Z][0-9]{3}[A-Z]$"
-  if not re.match(regex_cf, cf):
-    return False, "Il formato del Codice Fiscale non è valido."
-  cog_esperato, nome_esperato = calcola_iniziali_cf(cognome, nome)
-  if cf[:3] != cog_esperato:
-    return False, "Le prime 3 lettere del Codice Fiscale non corrispondono."
-  if cf[3:6] != nome_esperato:
-    return False, "Le lettere 4-6 del Codice Fiscale non corrispondono."
-  carattere_atteso = calcola_carattere_controllo_cf(cf[:15])
-  if cf[15] != carattere_atteso:
-    return False, "Il Codice Fiscale inserito non è corretto."
-  return True, ""
-
-
-# Funzioni per Account Utenti (Registrazione / Login / Recupero)
+# Gestione Account e Autenticazione
 def hash_password(password, salt=None):
   if salt is None:
     salt = secrets.token_hex(16)
@@ -519,15 +386,48 @@ def get_current_time_local():
 @st.dialog("📜 Regolamento di Lola's Glam House")
 def popup_regolamento():
   st.markdown("""
-        * ⏱️ **Durata Servizio:** Varia in base al trattamento scelto.
-        * 🕒 **Puntualità:** Si raccomanda di arrivare puntuali.
-        * ⏱️ **Disdette:** Preavviso minimo di 24 ore.
+        * ⏱️ **Puntualità:** Si raccomanda di arrivare puntuali all'appuntamento.
+        * ⏱️ **Disdette:** Si richiede un preavviso minimo di 24 ore per la cancellazione.
+        * ✨ **Trattamenti:** I nostri servizi sono pensati per valorizzare la tua bellezza naturale.
     """)
   if st.button("✨ Ho letto e accetto", use_container_width=True):
     st.session_state["regolamento_accettato"] = True
     st.session_state["mostra_dialog_regolamento"] = False
     st.rerun()
 
+
+# Catalogo Trattamenti di Lola's Glam House
+CATALOGO_SERVIZI = {
+    "💅 UNGHIE": ["Mani", "Piedi", "Semipermanente o gel", "Refil", "Ricostruzione"],
+    "👁️ CIGLIA": ["Montaggio", "Smontaggio", "Refil"],
+    "💇‍♀️ CAPELLI": [
+        "Taglio",
+        "Colore",
+        "Piega",
+        "Taglio + Piega",
+        "Taglio + Colore + Piega",
+        "Colore + Piega",
+        "Acconciatura",
+        "Meches",
+        "Balayage",
+        "Permanente",
+    ],
+    "💆‍♀️ MASSAGGIO": ["Relax", "Anticellulite", "Scrub"],
+    "✨ SOPRACCIGLIA": ["Pinzetta"],
+    "🪞 CERETTA": [
+        "Gambe intere",
+        "Metà gambe",
+        "Addome",
+        "Petto",
+        "Inguine",
+        "Baffetti",
+        "Braccia",
+        "Ascelle",
+        "Schiena",
+        "Total body",
+    ],
+    "🌸 VISO": ["Pulizia viso", "Massaggio antirughe"],
+}
 
 logo_path = None
 for possible_name in ["logo.png", "logo.PNG", "logo.jpg", "logo.jpeg"]:
@@ -563,7 +463,7 @@ if st.session_state["admin_logged_in"]:
 
 # --- VISTA 1: PANNELLO AMMINISTRATORE ---
 if st.session_state["admin_logged_in"]:
-  st.title("✨ Gestione Prenotazioni & Studio")
+  st.title("✨ Lola's Glam House - Admin Panel")
 
   if st.button("🔄 Aggiorna Dati"):
     st.rerun()
@@ -866,14 +766,17 @@ else:
       else:
         with st.container(border=True):
           ul = st.session_state["utente_loggato"]
-          trattamento = st.selectbox(
-              "Trattamento / Servizio *",
-              [
-                  "Trattamento Viso Glam",
-                  "Laminazione Ciglia",
-                  "Trucco Semipermanente",
-                  "Consulenza Estetica",
-              ],
+
+          categoria_scelta = st.selectbox(
+              "Categoria Trattamento *", list(CATALOGO_SERVIZI.keys())
+          )
+          servizi_disponibili = CATALOGO_SERVIZI[categoria_scelta]
+          trattamento_specifico = st.selectbox(
+              "Servizio Specifico *", servizi_disponibili
+          )
+
+          trattamento_completo = (
+              f"{categoria_scelta.split(' ')[1]} - {trattamento_specifico}"
           )
 
           data_scelta = st.date_input("Data *", min_value=datetime.today())
@@ -887,25 +790,36 @@ else:
 
           submitted = st.button("Conferma Prenotazione")
           if submitted:
-            st.session_state["pending_booking"] = {
-                "nome_completo": f"{ul['nome']} {ul['cognome']}",
-                "data_scelta": data_scelta,
-                "ora_scelta": ora_scelta,
-                "trattamento": trattamento,
-                "client_device_id": client_device_id,
-                "cf_principale": ul["codice_fiscale"],
-                "cf_secondario": None,
-            }
-            st.session_state["mostra_dialog_regolamento"] = True
-            st.rerun()
+            if not ora_scelta:
+              st.error(
+                  "Seleziona un orario valido (giorno chiuso o non disponibile)."
+              )
+            else:
+              st.session_state["pending_booking"] = {
+                  "nome_completo": f"{ul['nome']} {ul['cognome']}",
+                  "data_scelta": data_scelta,
+                  "ora_scelta": ora_scelta,
+                  "trattamento": trattamento_completo,
+                  "client_device_id": client_device_id,
+                  "cf_principale": ul["codice_fiscale"],
+                  "cf_secondario": None,
+              }
+              st.session_state["mostra_dialog_regolamento"] = True
+              st.rerun()
 
     with tab2:
       st.markdown("### Info Studio")
-      st.write("Benvenuta nel mondo di Lola's Glam House.")
+      st.write(
+          "Benvenuta nel mondo di Lola's Glam House, dove la cura della persona"
+          " incontra l'eleganza e la professionalità."
+      )
 
     with tab3:
       st.markdown("### Regolamento")
-      st.write("Termini e condizioni dei servizi.")
+      st.write(
+          "Consulta i nostri termini di servizio per vivere un'esperienza"
+          " rilassante e impeccabile."
+      )
 
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("🚪 Esci"):
