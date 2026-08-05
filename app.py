@@ -132,16 +132,20 @@ TRATTAMENTI_CONFIG = {
     ]
 }
 
-# Stile CSS professionale con Great Vibes (h1 principale) e Playfair Display (sidebar admin)
+# Stile CSS con sfondo personalizzato da GitHub e font tipografici dedicati
 st.markdown(
     """
     <style>
     /* Importazione dei font Great Vibes e Playfair Display da Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
-    /* Sfondo generale pulito basato su #f2b3ff */
+    /* Sfondo personalizzato con l'immagine background.png da GitHub[cite: 2] */
     .stApp {
-        background-color: #fdf5ff;
+        background-image: url("https://github.com/TribalTW/lola-glamhouse/blob/main/background.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
         font-family: 'Inter', sans-serif;
     }
 
@@ -171,6 +175,16 @@ st.markdown(
         border: 1.5px solid #e0a3ff !important;
         padding: 10px 14px !important;
         transition: all 0.2s ease-in-out !important;
+    }
+
+    /* Tendine (Selectbox) con il colore richiesto #df68f7 */
+    .stSelectbox > div > div {
+        background-color: #FFFFFF !important;
+        border-radius: 10px !important;
+        border: 2px solid #df68f7 !important;
+        padding: 6px 10px !important;
+        transition: all 0.2s ease-in-out !important;
+        box-shadow: 0 2px 8px rgba(223, 104, 247, 0.15) !important;
     }
 
     .stTextInput input:focus, .stSelectbox > div > div:focus, .stDateInput input:focus, .stNumberInput input:focus {
@@ -208,6 +222,7 @@ st.markdown(
         box-shadow: 0 2px 10px rgba(123, 31, 162, 0.3) !important;
     }
 
+    /* Stile specifico per il pulsante secondario (Password dimenticata?) nella seconda colonna */
     div[data-testid="stColumn"]:nth-child(2) div.stFormSubmitButton > button {
         background: #fcf0ff !important;
         color: #4a148c !important;
@@ -220,6 +235,13 @@ st.markdown(
         color: #4a148c !important;
         box-shadow: 0 6px 20px rgba(242, 179, 255, 0.35) !important;
         transform: translateY(-2px);
+    }
+    
+    div[data-testid="stColumn"] div.stButton > button.btn-aggiorna {
+        padding: 8px 16px !important;
+        font-size: 0.9rem !important;
+        width: auto !important;
+        white-space: nowrap !important;
     }
     
     /* Tipografia e Titoli - Applicazione del font Great Vibes al titolo principale (h1) */
@@ -240,6 +262,7 @@ st.markdown(
         text-align: center;
     }
     
+    /* Modifica dimensione e colore per "Area Riservata (Admin)" */
     [data-testid="stSidebar"] h1 {
         font-family: 'Playfair Display', serif !important;
         font-weight: 700 !important;
@@ -311,6 +334,17 @@ st.markdown(
         z-index: 999 !important;
     }
 
+    @media (max-width: 768px) {
+        .stTabs [data-baseweb="tab"] {
+            padding: 8px 14px !important;
+            font-size: 13px !important;
+            min-width: auto !important;
+        }
+        .stTabs [aria-selected="true"] {
+            padding: 8px 14px !important;
+        }
+    }
+
     .stCaption, p {
         text-align: center;
     }
@@ -344,6 +378,7 @@ def calcola_iniziali_cf(cognome, nome):
     return cognome_cf, nome_cf
 
 
+# Tabelle ufficiali per il calcolo del carattere di controllo del Codice Fiscale
 _VALORI_DISPARI = {
     "0": 1, "1": 0, "2": 5, "3": 7, "4": 9, "5": 13, "6": 15, "7": 17, "8": 19, "9": 21,
     "A": 1, "B": 0, "C": 5, "D": 7, "E": 9, "F": 13, "G": 15, "H": 17, "I": 19, "J": 21,
@@ -389,6 +424,7 @@ def valida_codice_fiscale(nome, cognome, cf):
     return True, ""
 
 
+# --- Funzioni di supporto per Account Utenti (Registrazione/Login/Recupero) ---
 def hash_password(password, salt=None):
     if salt is None:
         salt = secrets.token_hex(16)
@@ -1235,17 +1271,8 @@ else:
                 with c2:
                     st.image(logo_path, use_container_width=True)
 
-            # Riquadro attorno al titolo principale "Lola's Glam House"
-            st.markdown(
-                """
-                <div class="box-info-carino" style="padding: 24px; margin-bottom: 25px;">
-                    <h1 style="font-family: 'Great Vibes', cursive; color: #4a148c; font-size: 4rem; margin: 0; line-height: 1.1; text-align: center;">Lola's Glam House</h1>
-                    <p style="color: #4a148c; font-weight: 600; margin-top: 6px; margin-bottom: 0; font-size: 1.1rem; text-align: center;">Estetica & Benessere</p>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
+            st.title("Lola's Glam House")
+            st.write("**Estetica & Benessere**")
             st.markdown("#### 👤 Accedi al tuo account o registrati")
             st.markdown(
                 """
