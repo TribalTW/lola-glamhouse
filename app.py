@@ -1,5 +1,4 @@
 from datetime import datetime, time, timedelta
-import base64
 import hashlib
 import os
 import re
@@ -14,8 +13,8 @@ from sqlalchemy import create_engine, text
 
 # Configurazione Pagina
 st.set_page_config(
-    page_title="Lola's Glam House - Beauty & Makeup Lounge",
-    page_icon="💄",
+    page_title="Lola's Glam House",
+    page_icon="💅",
     layout="centered",
 )
 
@@ -77,81 +76,52 @@ def init_db():
 
 init_db()
 
-# Funzione per convertire l'immagine di sfondo in base64 per il CSS
-@st.cache_data
-def get_img_as_base64(file_path):
-    if os.path.exists(file_path):
-        with open(file_path, "rb") as f:
-            data = f.read()
-        return base64.b64encode(data).decode()
-    return ""
-
-bg_base64 = get_img_as_base64("background.png")
-if bg_base64:
-    bg_css_rule = f"background: url('data:image/png;base64,{bg_base64}') no-repeat center center fixed; background-size: cover;"
-else:
-    bg_css_rule = "background-color: #3b2b4d;"
-
-# Stile CSS professionale e raffinato con tema viola stellato, campi bianchi e tendina chiara
+# Stile CSS professionale basato sul colore #f2b3ff, ombreggiature e animazioni coordinate
 st.markdown(
-    f"""
+    """
     <style>
-    /* Sfondo generale con immagine personalizzata */
-    .stApp {{
-        {bg_css_rule}
+    /* Sfondo generale pulito basato su #f2b3ff */
+    .stApp {
+        background-color: #fdf5ff;
         font-family: 'Inter', sans-serif;
-    }}
+    }
 
-    /* Container professionali con effetto glassmorphism chiaro e sfumature viola */
-    div.stVerticalBlockBorderWrapper, div[data-testid="stVerticalBlockBorderWrapper"] {{
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(245, 238, 250, 0.92) 100%) !important;
-        border: 1px solid #d8b4e2 !important;
+    /* Container professionali con bordi arrotondati, sfumatura delicata e ombreggiature con animazione */
+    div.stVerticalBlockBorderWrapper, div[data-testid="stVerticalBlockBorderWrapper"] {
+        background: linear-gradient(135deg, #ffffff 0%, #fcf0ff 100%) !important;
+        border: 1px solid #f2b3ff !important;
         border-radius: 20px !important;
         padding: 24px !important;
-        box-shadow: 0 10px 30px rgba(75, 40, 90, 0.25) !important;
+        box-shadow: 0 10px 30px rgba(242, 179, 255, 0.2) !important;
         transition: all 0.3s ease-in-out !important;
-    }}
+    }
     
-    div[data-testid="stVerticalBlockBorderWrapper"]:hover {{
-        box-shadow: 0 15px 35px rgba(75, 40, 90, 0.35) !important;
+    div[data-testid="stVerticalBlockBorderWrapper"]:hover {
+        box-shadow: 0 15px 35px rgba(242, 179, 255, 0.35) !important;
         transform: translateY(-2px);
-    }}
+    }
     
-    div[data-testid="stVerticalBlockBorderWrapper"] div {{
+    div[data-testid="stVerticalBlockBorderWrapper"] div {
         background-color: transparent !important;
-    }}
+    }
     
-    /* Campi di input moderni con sfondo rigorosamente BIANCO e testo scuro */
-    .stTextInput input, .stDateInput input, .stNumberInput input {{
+    /* Campi di input moderni */
+    .stTextInput input, .stSelectbox > div > div, .stDateInput input, .stNumberInput input {
         background-color: #FFFFFF !important;
-        color: #333333 !important;
         border-radius: 10px !important;
-        border: 1.5px solid #c8a2c8 !important;
+        border: 1.5px solid #e0a3ff !important;
         padding: 10px 14px !important;
         transition: all 0.2s ease-in-out !important;
-    }}
+    }
 
-    .stTextInput input:focus, .stDateInput input:focus, .stNumberInput input:focus {{
-        border-color: #7b2cbf !important;
-        box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.2) !important;
-        color: #333333 !important;
-    }}
-
-    /* Stile personalizzato per i menu a tendina (Selectbox) con colore coerente NON scuro */
-    .stSelectbox div[data-baseweb="select"] > div {{
-        background-color: #f7f0fc !important;
-        color: #333333 !important;
-        border-radius: 10px !important;
-        border: 1.5px solid #c8a2c8 !important;
-    }}
+    .stTextInput input:focus, .stSelectbox > div > div:focus, .stDateInput input:focus, .stNumberInput input:focus {
+        border-color: #7b1fa2 !important;
+        box-shadow: 0 0 0 3px rgba(123, 31, 162, 0.15) !important;
+    }
     
-    .stSelectbox div[data-baseweb="select"] * {{
-        color: #333333 !important;
-    }}
-    
-    /* Pulsanti professionali con tonalità viola glam */
-    div.stButton > button, div.stDownloadButton > button, div.stFormSubmitButton > button {{
-        background: linear-gradient(135deg, #7b2cbf 0%, #4a154b 100%) !important;
+    /* Pulsanti professionali con effetti di transizione e ombreggiatura */
+    div.stButton > button, div.stDownloadButton > button, div.stFormSubmitButton > button {
+        background: linear-gradient(135deg, #7b1fa2 0%, #4a148c 100%) !important;
         color: white !important;
         border-radius: 12px !important;
         font-size: 1.05rem !important;
@@ -162,123 +132,128 @@ st.markdown(
         margin-top: 8px !important;
         text-align: center !important;
         display: block !important;
-        box-shadow: 0 4px 15px rgba(74, 21, 75, 0.4) !important;
+        box-shadow: 0 4px 15px rgba(123, 31, 162, 0.3) !important;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         cursor: pointer;
-    }}
+    }
     
-    div.stButton > button:hover, div.stDownloadButton > button:hover, div.stFormSubmitButton > button:hover {{
-        background: linear-gradient(135deg, #8c36d1 0%, #5d1b5e 100%) !important;
+    div.stButton > button:hover, div.stDownloadButton > button:hover, div.stFormSubmitButton > button:hover {
+        background: linear-gradient(135deg, #6a1b9a 0%, #38006b 100%) !important;
         color: white !important;
-        box-shadow: 0 6px 20px rgba(74, 21, 75, 0.6) !important;
+        box-shadow: 0 6px 20px rgba(123, 31, 162, 0.45) !important;
         transform: translateY(-2px);
-    }}
+    }
 
-    div.stButton > button:active, div.stFormSubmitButton > button:active {{
+    div.stButton > button:active, div.stFormSubmitButton > button:active {
         transform: translateY(0px);
-        box-shadow: 0 2px 10px rgba(74, 21, 75, 0.4) !important;
-    }}
+        box-shadow: 0 2px 10px rgba(123, 31, 162, 0.3) !important;
+    }
 
-    /* Stile specifico per il pulsante secondario (Password dimenticata?) */
-    div[data-testid="stColumn"]:nth-child(2) div.stFormSubmitButton > button {{
-        background: #f4ecf7 !important;
-        color: #5b2c6f !important;
-        border: 1.5px solid #c8a2c8 !important;
-        box-shadow: 0 4px 15px rgba(200, 162, 200, 0.2) !important;
-    }}
+    /* Stile specifico per il pulsante secondario (Password dimenticata?) nella seconda colonna */
+    div[data-testid="stColumn"]:nth-child(2) div.stFormSubmitButton > button {
+        background: #fcf0ff !important;
+        color: #4a148c !important;
+        border: 1.5px solid #f2b3ff !important;
+        box-shadow: 0 4px 15px rgba(242, 179, 255, 0.2) !important;
+    }
 
-    div[data-testid="stColumn"]:nth-child(2) div.stFormSubmitButton > button:hover {{
-        background: #ebd8f3 !important;
-        color: #4a154b !important;
-        box-shadow: 0 6px 20px rgba(200, 162, 200, 0.4) !important;
+    div[data-testid="stColumn"]:nth-child(2) div.stFormSubmitButton > button:hover {
+        background: #f8e1ff !important;
+        color: #4a148c !important;
+        box-shadow: 0 6px 20px rgba(242, 179, 255, 0.35) !important;
         transform: translateY(-2px);
-    }}
+    }
+    
+    div[data-testid="stColumn"] div.stButton > button.btn-aggiorna {
+        padding: 8px 16px !important;
+        font-size: 0.9rem !important;
+        width: auto !important;
+        white-space: nowrap !important;
+    }
     
     /* Tipografia e Titoli */
-    h1, h2, h3, h4 {{
-        color: #4a154b !important;
+    h1, h2, h3, h4 {
+        color: #4a148c !important;
         font-weight: 700 !important;
         letter-spacing: -0.5px;
         text-align: center;
-        text-shadow: 0 2px 4px rgba(255, 255, 255, 0.6);
-    }}
+    }
     
-    /* Box informativo in stile glam viola */
-    .box-info-carino {{
-        background: linear-gradient(135deg, #f4ecf7 0%, #ebd8f3) !important;
-        border: 1px solid #c8a2c8 !important;
+    /* Box informativo in stile pastello con #f2b3ff */
+    .box-info-carino {
+        background: linear-gradient(135deg, #fcf0ff 0%, #f8e1ff) !important;
+        border: 1px solid #f2b3ff !important;
         border-radius: 14px !important;
         padding: 16px 20px !important;
         margin-bottom: 20px !important;
         text-align: center !important;
-        color: #4a154b !important;
+        color: #4a148c !important;
         font-size: 0.98rem !important;
-        box-shadow: 0 4px 15px rgba(200, 162, 200, 0.2) !important;
-    }}
+        box-shadow: 0 4px 15px rgba(242, 179, 255, 0.2) !important;
+    }
     
-    /* Stile delle Tab di navigazione */
-    .stTabs, .stTabs [data-baseweb="tab-list"], .stTabs div {{
+    /* Stile delle Tab di navigazione - Uniforme e a capsula */
+    .stTabs, .stTabs [data-baseweb="tab-list"], .stTabs div {
         overflow: visible !important;
-    }}
+    }
 
-    .stTabs [data-baseweb="tab-highlight"] {{
+    .stTabs [data-baseweb="tab-highlight"] {
         display: none !important;
-    }}
+    }
 
-    .stTabs [data-baseweb="tab-list"] {{
+    .stTabs [data-baseweb="tab-list"] {
         display: flex !important;
         flex-wrap: wrap !important;
         justify-content: center !important;
         gap: 8px !important;
-    }}
+    }
 
-    .stTabs [data-baseweb="tab"] {{
-        background-color: rgba(244, 236, 247, 0.9);
+    .stTabs [data-baseweb="tab"] {
+        background-color: #fcf0ff;
         border-radius: 40px !important;
-        color: #5b2c6f;
+        color: #4a148c;
         font-weight: 600;
         padding: 10px 24px !important;
         text-align: center !important;
         font-size: 15px !important;
-        border: 1.5px solid #c8a2c8 !important;
+        border: 1.5px solid #f2b3ff !important;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
         flex: 1 1 auto !important;
-    }}
+    }
 
-    .stTabs [data-baseweb="tab"]:hover {{
-        background-color: rgba(235, 216, 243, 0.95);
+    .stTabs [data-baseweb="tab"]:hover {
+        background-color: #f8e1ff;
         transform: translateY(-2px);
-    }}
+    }
 
-    .stTabs [aria-selected="true"] {{
-        background: linear-gradient(135deg, #7b2cbf 0%, #4a154b) !important;
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, #f2b3ff 0%, #d880ff) !important;
         color: #ffffff !important;
-        border-color: #4a154b !important;
+        border-color: #d880ff !important;
         border-radius: 40px !important;
         padding: 10px 24px !important;
-        box-shadow: 0 12px 30px rgba(74, 21, 75, 0.4) !important;
+        box-shadow: 0 12px 30px rgba(216, 128, 255, 0.55) !important;
         transform: translateY(-4px) scale(1.03) !important;
         z-index: 999 !important;
-    }}
+    }
 
-    @media (max-width: 768px) {{
-        .stTabs [data-baseweb="tab"] {{
+    @media (max-width: 768px) {
+        .stTabs [data-baseweb="tab"] {
             padding: 8px 14px !important;
             font-size: 13px !important;
-        }}
-        .stTabs [aria-selected="true"] {{
+            min-width: auto !important;
+        }
+        .stTabs [aria-selected="true"] {
             padding: 8px 14px !important;
-        }}
-    }}
+        }
+    }
 
-    .stCaption, p {{
+    .stCaption, p {
         text-align: center;
-        color: #2c1635;
-        font-weight: 500;
-    }}
+    }
 
-    #MainMenu {{visibility: hidden;}}
-    footer {{visibility: hidden;}}
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
     </style>
 """,
     unsafe_allow_html=True,
@@ -306,6 +281,7 @@ def calcola_iniziali_cf(cognome, nome):
     return cognome_cf, nome_cf
 
 
+# Tabelle ufficiali per il calcolo del carattere di controllo del Codice Fiscale
 _VALORI_DISPARI = {
     "0": 1, "1": 0, "2": 5, "3": 7, "4": 9, "5": 13, "6": 15, "7": 17, "8": 19, "9": 21,
     "A": 1, "B": 0, "C": 5, "D": 7, "E": 9, "F": 13, "G": 15, "H": 17, "I": 19, "J": 21,
@@ -346,12 +322,12 @@ def valida_codice_fiscale(nome, cognome, cf):
 
     carattere_atteso = calcola_carattere_controllo_cf(cf[:15])
     if cf[15] != carattere_atteso:
-        return False, "Il Codice Fiscale inserito non è corretto (carattere di controllo non valido)."
+        return False, "Il Codice Fiscale inserito non è corretto (carattere di controllo non valido). Ricontrolla di averlo digitato correttamente."
 
     return True, ""
 
 
-# --- Funzioni Account Utenti ---
+# --- Funzioni di supporto per Account Utenti (Registrazione/Login/Recupero) ---
 def hash_password(password, salt=None):
     if salt is None:
         salt = secrets.token_hex(16)
@@ -378,7 +354,7 @@ def registra_utente(nome, cognome, cf, password):
             ).fetchone()
             
             if res:
-                return False, "Esiste già un account registrato con questo Codice Fiscale."
+                return False, "Esiste già un utente registrato con questo Codice Fiscale."
             
             conn.execute(
                 text("""
@@ -465,14 +441,14 @@ def get_orari_per_data(data):
     else:
         d = data
     weekday = d.weekday()
-    if weekday == 6:  # Domenica chiuso
+    if weekday == 5: # Sabato
+        return ["09:00", "10:00", "11:00", "12:00", "15:00", "16:00", "17:00"]
+    elif weekday == 6: # Domenica chiuso
         return []
-    elif weekday == 5:  # Sabato orario continuato/ridotto
-        return ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00"]
-    else:
+    else: # Lunedì - Venerdì
         return [
-            "09:00", "10:00", "11:00", "12:00", 
-            "14:30", "15:30", "16:30", "17:30", "18:30"
+            "09:00", "10:00", "11:00", "12:00",
+            "15:00", "16:00", "17:00", "18:00", "19:00",
         ]
 
 
@@ -499,46 +475,47 @@ def get_current_time_local():
 
 def genera_file_ics(nome_trattamento, data_str, ora_str):
     dt_inizio = datetime.strptime(f"{data_str} {ora_str}", "%Y-%m-%d %H:%M")
-    dt_fine = dt_inizio + timedelta(minutes=60)
+    dt_fine = dt_inizio + timedelta(minutes=50)
     
     fmt = "%Y%m%dT%H%M00"
-    titolo_evento = f"Beauty Appuntamento: {nome_trattamento} - Lola's Glam House"
+    titolo_evento = f"Lola's Glam House: {nome_trattamento}"
     
     ics_content = f"""BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Lolas Glam House//Beauty Lounge//IT
+PRODID:-//Lolas Glam House//Estetica//IT
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
 SUMMARY:{titolo_evento}
-DESCRIPTION:Il tuo appuntamento glamour presso Lola's Glam House.\\nTi aspettiamo per risaltare la tua bellezza!
-LOCATION:Lola's Glam House Studio
+DESCRIPTION:Appuntamento presso Lola's Glam House.\\nTi ricordiamo di arrivare puntuale per il tuo trattamento.
+LOCATION:Lola's Glam House
 DTSTART:{dt_inizio.strftime(fmt)}
 DTEND:{dt_fine.strftime(fmt)}
 BEGIN:VALARM
 TRIGGER:-PT60M
 ACTION:DISPLAY
-DESCRIPTION:Promemoria: Tra 1 ora hai il tuo appuntamento beauty in salone!
+DESCRIPTION:Promemoria: Tra 1 ora hai il tuo appuntamento da Lola's Glam House!
 END:VALARM
 END:VEVENT
 END:VCALENDAR"""
     return ics_content
 
 
-@st.dialog("📜 Termini & Condizioni del Salone")
+@st.dialog("📜 Regolamento del Salone - Termini di Servizio")
 def popup_regolamento():
     st.markdown(
         """
-        Prima di confermare il tuo appuntamento, ti invitiamo a leggere le linee guida di Lola's Glam House:
+        Prima di completare la prenotazione, ti invitiamo a leggere attentamente il regolamento di Lola's Glam House:
         
-        * 🕒 **Puntualità:** Si prega di arrivare puntuali. Un ritardo superiore a 15 minuti potrebbe comportare la riduzione del trattamento o la necessità di ripianificarlo.
-        * 💅 **Cura e Igiene:** Tutti i nostri strumenti sono sterilizzati e imbustati singolarmente per la massima sicurezza.
-        * 📵 **Relax:** Il salone è pensato come uno spazio di relax e coccole; ti invitiamo a impostare i dispositivi in modalità silenziosa.
-        * ⏱️ **Cancellazioni:** Eventuali disdette o cambi di orario devono essere comunicati con almeno 24 ore di preavviso.
+        * ⏱️ **Durata Trattamento:** Varia in base al servizio scelto.
+        * 🕒 **Puntualità:** Si raccomanda la massima puntualità.
+        * 🧴 **Cura di sé:** Vi invitiamo a segnalare eventuali allergie, sensibilità o condizioni particolari prima dell'inizio.
+        * 📵 **Cellulari:** Modalità silenziosa consigliata per godersi il relax.
+        * ⏱️ **Disdette:** Preavviso minimo di 24 ore, in caso contrario l'appuntamento potrebbe essere conteggiato.
         """
     )
     st.markdown("---")
-    if st.button("✅ Ho letto e accetto le condizioni", use_container_width=True):
+    if st.button("✅ Ho letto e accetto il regolamento", use_container_width=True):
         st.session_state["regolamento_accettato"] = True
         st.session_state["mostra_dialog_regolamento"] = False
         st.rerun()
@@ -546,7 +523,7 @@ def popup_regolamento():
 
 logo_path = None
 for possible_name in [
-    "logo.png", "logo.PNG", "logo.jpg", "logo.jpeg", "logo_lola.png",
+    "logo.png", "logo.PNG", "logo.jpg", "logo.jpeg", "logo.png.png",
 ]:
     if os.path.exists(possible_name):
         logo_path = possible_name
@@ -559,7 +536,7 @@ if logo_path:
 
 st.sidebar.title("🔐 Area Riservata (Admin)")
 
-ADMIN_PASSWORD = st.secrets.get("admin_password", "LolasGlam2026Admin")
+ADMIN_PASSWORD = st.secrets.get("admin_password", "PasswordDiFallbackSeNonImpostata")
 
 if "admin_logged_in" not in st.session_state:
     st.session_state["admin_logged_in"] = False
@@ -603,10 +580,10 @@ if st.session_state["admin_logged_in"]:
             st.info("Nessuna prenotazione presente nel database.")
 
     with st.container(border=True):
-        st.subheader("✅ Spunta Presenze & Codici Servizio")
+        st.subheader("✅ Spunta Presenze Veloci & Codici Seduta")
         st.write(
-            "Seleziona la data: i clienti risultano assenti fino al check-in o alla spunta. "
-            "**Conferma la presenza** per generare il codice univoco del servizio."
+            "Seleziona la data: i clienti partono di default come assenti. "
+            "**Metti la spunta solo a chi si è presentato** e clicca salva per generare i codici seduta."
         )
 
         data_presenze = st.date_input(
@@ -641,7 +618,7 @@ if st.session_state["admin_logged_in"]:
                             key=f"pres_{app_id}",
                         )
                         st.markdown(
-                            f"<div style='color: #4a154b; font-size: 0.85em; margin-top: -8px; margin-left: 24px; font-weight: 600;'>{tratt_cli}</div>",
+                            f"<div style='color: #666; font-size: 0.85em; margin-top: -8px; margin-left: 24px;'>{tratt_cli}</div>",
                             unsafe_allow_html=True,
                         )
                         presenze_dict[app_id] = (
@@ -650,14 +627,14 @@ if st.session_state["admin_logged_in"]:
 
                     with col_p2:
                         if is_presente:
-                            codice_servizio = f"LOLA-GLAM-OK-{app_id}-{data_presenze_str}"
+                            codice_seduta = f"SEDUTA-OK-{app_id}-{data_presenze_str}"
                             st.markdown(
-                                f"<code style='color: #4a154b; font-weight: bold;'>{codice_servizio}</code>",
+                                f"<code style='color: #7b1fa2; font-weight: bold;'>{codice_seduta}</code>",
                                 unsafe_allow_html=True,
                             )
                         else:
                             st.markdown(
-                                "<span style='color: gray;'>In attesa</span>",
+                                "<span style='color: gray;'>Assente</span>",
                                 unsafe_allow_html=True,
                             )
 
@@ -673,19 +650,19 @@ if st.session_state["admin_logged_in"]:
                                 text("UPDATE prenotazioni SET stato_presenza = :stato WHERE id = :pid"),
                                 {"stato": nuovo_stato, "pid": app_id}
                             )
-                    st.success("Stato presenze aggiornato con successo!")
+                    st.success("Presenze salvate con successo!")
                     st.rerun()
         else:
-            st.info("Nessun appuntamento registrato per la data selezionata.")
+            st.info("Nessun appuntamento cliente registrato per la data selezionata.")
 
         st.markdown("---")
-        st.markdown("#### 📈 Statistiche e Servizi Svolti per Cliente")
-        if st.button("📊 Calcola Report Clienti"):
+        st.markdown("#### 📈 Riepilogo e Calcolo Totale Trattamenti (Gestionale)")
+        if st.button("📊 Calcola Statistiche e Trattamenti Svolti per Cliente"):
             df_stat = pd.read_sql_query(
                 """
                 SELECT nome, 
                        COUNT(CASE WHEN stato_presenza = 'Presente' THEN 1 END) AS trattamenti_effettuati,
-                       COUNT(CASE WHEN stato_presenza = 'Assente' THEN 1 END) AS assenze_cancellazioni,
+                       COUNT(CASE WHEN stato_presenza = 'Assente' THEN 1 END) AS trattamenti_assenze,
                        COUNT(*) AS totale_prenotazioni
                 FROM prenotazioni 
                 WHERE device_id != 'SYSTEM'
@@ -696,23 +673,23 @@ if st.session_state["admin_logged_in"]:
             )
             if not df_stat.empty:
                 st.dataframe(df_stat, use_container_width=True)
-                st.success("💡 Statistiche calcolate con successo!")
+                st.success("💡 Report calcolato con successo!")
             else:
-                st.info("Dati insufficienti per generare il report.")
+                st.info("Nastro dati insufficiente per le statistiche.")
 
     with st.container(border=True):
-        st.subheader("📷 QR Code Check-in in Salone")
+        st.subheader("📷 QR Code Check-in Ingresso Salone")
         st.write(
-            "Posiziona questo QR code all'ingresso del salone. Le clienti potranno inquadrarlo "
-            "per confermare automaticamente il proprio arrivo."
+            "Mostra o stampa questo QR code da posizionare all'ingresso del salone. "
+            "Quando arriva la cliente potrà inquadrarlo per registrare la presenza."
         )
 
         components.html(
             """
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #ffffff; padding: 20px; border-radius: 12px; border: 2px dashed #7b2cbf;">
-            <h4 style="color: #4a154b; margin-bottom: 10px;">Inquadra per Check-in in Salone ✨</h4>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #ffffff; padding: 20px; border-radius: 12px; border: 2px dashed #7b1fa2;">
+            <h4 style="color: #4a148c; margin-bottom: 10px;">Inquadra per Check-in in Salone 💅</h4>
             <div id="qrcode" style="margin: 15px;"></div>
-            <p style="font-size: 12px; color: #555; text-align: center;">Inquadra con la fotocamera all'arrivo in salone.</p>
+            <p style="font-size: 12px; color: #555; text-align: center;">Inquadra con la fotocamera dello smartphone all'arrivo in salone.</p>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
         <script>
@@ -734,13 +711,13 @@ if st.session_state["admin_logged_in"]:
         )
 
     with st.container(border=True):
-        st.subheader("🔓 Gestione Chiusure & Disponibilità Salone")
-        st.write("Blocca o sblocca date e orari specifici per ferie, festività o esigenze straordinarie.")
+        st.subheader("🔓 Gestione Chiusure e Sblocchi Salone")
+        st.write("Seleziona un giorno o un intervallo e gestisci la disponibilità.")
 
         col_bs1, col_bs2 = st.columns(2)
         with col_bs1:
             data_intervallo = st.date_input(
-                "Data o Intervallo",
+                "Data o Intervallo di Date",
                 value=(datetime.today(), datetime.today()),
                 min_value=datetime.today(),
                 key="data_intervallo_input",
@@ -754,8 +731,8 @@ if st.session_state["admin_logged_in"]:
 
         ora_intervallo = None
         TUTTI_GLI_ORARI_ADMIN = [
-            "09:00", "10:00", "11:00", "12:00", 
-            "14:30", "15:30", "16:30", "17:30", "18:30"
+            "09:00", "10:00", "11:00", "12:00",
+            "15:00", "16:00", "17:00", "18:00", "19:00",
         ]
         if modo_intervallo == "Orario specifico":
             ora_intervallo = st.selectbox(
@@ -764,9 +741,9 @@ if st.session_state["admin_logged_in"]:
 
         col_btn1, col_btn2 = st.columns(2)
         with col_btn1:
-            btn_blocca = st.button("🔒 Chiudi Selezionati")
+            btn_blocca = st.button("🔒 Blocca Selezionati")
         with col_btn2:
-            btn_sblocca = st.button("🔓 Apri Selezionati")
+            btn_sblocca = st.button("🔓 Sblocca Selezionati")
 
         if btn_blocca or btn_sblocca:
             if isinstance(data_intervallo, tuple):
@@ -816,7 +793,7 @@ if st.session_state["admin_logged_in"]:
                                         "di": "SYSTEM", "sp": "Chiuso"
                                     }
                                 )
-                    st.success("Chiusura applicata con successo!")
+                    st.success("Blocco applicato con successo!")
 
                 elif btn_sblocca:
                     for d_str in lista_date:
@@ -828,21 +805,21 @@ if st.session_state["admin_logged_in"]:
                                     text("DELETE FROM prenotazioni WHERE data = :d AND ora = :o"),
                                     {"d": d_str, "o": ora_intervallo}
                                 )
-                    st.success("Riapertura applicata con successo!")
+                    st.success("Sblocco applicato con successo!")
 
             st.rerun()
 
     with st.container(border=True):
-        st.subheader("🛡️ Sicurezza & Gestione Blacklist")
+        st.subheader("🛡️ Gestione Spam, Sicurezza e Blacklist")
 
         col_sec1, col_sec2 = st.columns(2)
         with col_sec1:
-            st.markdown("##### Elimina Prenotazione")
+            st.markdown("##### Elimina Prenotazione Singola")
             id_da_eliminare = st.number_input(
-                "ID Prenotazione",
+                "ID Prenotazione da eliminare",
                 min_value=0, step=1, key="id_elimina_input",
             )
-            if st.button("Elimina Prenotazione"):
+            if st.button("Elimina Singola Prenotazione"):
                 if id_da_eliminare > 0:
                     with engine.begin() as conn:
                         conn.execute(text("DELETE FROM prenotazioni WHERE id = :id"), {"id": id_da_eliminare})
@@ -850,7 +827,7 @@ if st.session_state["admin_logged_in"]:
                     st.rerun()
 
         with col_sec2:
-            st.markdown("##### Banna Dispositivo")
+            st.markdown("##### Banna Utente Individuale")
             df_prenotazioni_attive = pd.read_sql_query(
                 "SELECT id, nome, trattamento, device_id FROM prenotazioni WHERE device_id != 'SYSTEM'",
                 engine,
@@ -866,11 +843,11 @@ if st.session_state["admin_logged_in"]:
                     + ")"
                 )
                 scelta_ban = st.selectbox(
-                    "Seleziona utente",
+                    "Seleziona utente da bannare",
                     df_prenotazioni_attive["label"].tolist(),
                     key="seleziona_ban_input",
                 )
-                if st.button("Banna Utente"):
+                if st.button("Banna Utente Selezionato"):
                     id_selezionato = int(scelta_ban.split(" - ")[0])
                     with engine.begin() as conn:
                         res = conn.execute(
@@ -883,16 +860,16 @@ if st.session_state["admin_logged_in"]:
                                 text("INSERT INTO banned_devices (device_id) VALUES (:dev_id) ON CONFLICT (device_id) DO NOTHING"),
                                 {"dev_id": dev_id_da_bannare}
                             )
-                            st.success("Dispositivo bannato!")
+                            st.success("Utente bannato con successo!")
                     st.rerun()
             else:
-                st.info("Nessuna prenotazione attiva.")
+                st.info("Nessuna prenotazione disponibile.")
 
-        st.markdown("##### 📋 Dispositivi in Blacklist")
+        st.markdown("##### 📋 Blacklist Dispositivi")
         df_banned = pd.read_sql_query(
             """
             SELECT b.device_id, 
-                   COALESCE(string_agg(DISTINCT p.nome, ', '), 'Nessun nome') AS nominativi
+                   COALESCE(string_agg(DISTINCT p.nome, ', '), 'Nessun nome') AS nominativi_utilizzati
             FROM banned_devices b
             LEFT JOIN prenotazioni p ON b.device_id = p.device_id
             GROUP BY b.device_id
@@ -903,11 +880,11 @@ if st.session_state["admin_logged_in"]:
         if not df_banned.empty:
             st.dataframe(df_banned, use_container_width=True)
             dev_da_sbannare = st.selectbox(
-                "Dispositivo da riabilitare",
+                "Dispositivo da rimuovere dalla blacklist",
                 df_banned["device_id"].tolist(),
                 key="sbianca_device",
             )
-            if st.button("Rimuovi Ban"):
+            if st.button("Rimuovi Ban (Sbanna)"):
                 with engine.begin() as conn:
                     conn.execute(
                         text("DELETE FROM banned_devices WHERE device_id = :dev_id"),
@@ -920,7 +897,10 @@ if st.session_state["admin_logged_in"]:
 
     with st.container(border=True):
         st.subheader("👤 Gestione Account Registrati")
-        st.write("Elenco degli account clienti registrati in piattaforma.")
+        st.write(
+            "Qui trovi tutti gli account creati dalle clienti (Nome, Cognome, Codice Fiscale). "
+            "Puoi eliminarne uno se richiesto."
+        )
 
         df_utenti = pd.read_sql_query(
             "SELECT id, nome, cognome, codice_fiscale, data_registrazione FROM utenti ORDER BY data_registrazione DESC",
@@ -941,17 +921,17 @@ if st.session_state["admin_logged_in"]:
                 + ")"
             )
             scelta_utente_elimina = st.selectbox(
-                "Seleziona account",
+                "Seleziona account da eliminare",
                 df_utenti["label"].tolist(),
                 key="seleziona_utente_elimina_input",
             )
             conferma_eliminazione = st.checkbox(
-                "Confermo l'eliminazione definitiva dell'account",
+                "Confermo di voler eliminare definitivamente questo account",
                 key="conferma_elimina_utente_checkbox",
             )
-            if st.button("🗑️ Elimina Account"):
+            if st.button("🗑️ Elimina Account Selezionato"):
                 if not conferma_eliminazione:
-                    st.error("Devi spuntare la casella di conferma.")
+                    st.error("Devi prima confermare la casella qui sopra per procedere con l'eliminazione.")
                 else:
                     id_utente_da_eliminare = int(scelta_utente_elimina.split(" - ")[0])
                     with engine.begin() as conn:
@@ -959,10 +939,10 @@ if st.session_state["admin_logged_in"]:
                             text("DELETE FROM utenti WHERE id = :id"),
                             {"id": id_utente_da_eliminare}
                         )
-                    st.success(f"Account #{id_utente_da_eliminare} eliminato.")
+                    st.success(f"Account #{id_utente_da_eliminare} eliminato con successo!")
                     st.rerun()
         else:
-            st.info("Nessun account cliente registrato.")
+            st.info("Nessun account cliente registrato al momento.")
 
 
 # --- VISTA 2: PAGINA PRINCIPALE CLIENTE ---
@@ -980,7 +960,7 @@ else:
             c1, c2, c3 = st.columns([1, 2, 1])
             with c2:
                 st.image(logo_path, use_container_width=True)
-        st.error("⛔ Accesso negato: questo dispositivo è stato limitato dal salone.")
+        st.error("⛔ Accesso negato: questo dispositivo è stato bloccato.")
     else:
         if st.query_params.get("action") == "checkin":
             if logo_path:
@@ -988,7 +968,7 @@ else:
                 with c2:
                     st.image(logo_path, use_container_width=True)
 
-            st.title("📍 Check-in in Salone")
+            st.title("📍 Check-in Ingresso Salone")
             
             current_dt = get_current_time_local()
             oggi_str = current_dt.strftime("%Y-%m-%d")
@@ -1000,15 +980,15 @@ else:
                 ]
                 st.balloons()
                 with st.container(border=True):
-                    st.markdown(f"### Ciao {p_nome}! ✨")
-                    st.success("🎉 **Arrivo registrato con successo!**")
+                    st.markdown(f"### Ciao {p_nome}! 💅")
+                    st.success("🎉 **Presenza registrata con successo!**")
                     st.write(
-                        f"Il tuo trattamento di **{p_tratt}** delle ore **{p_ora}** è confermato."
+                        f"Ho registrato il tuo arrivo per il trattamento di **{p_tratt}** delle ore **{p_ora}**."
                     )
                     st.markdown("---")
-                    st.markdown(f"**Codice Servizio:**")
+                    st.markdown(f"**Il tuo Codice Seduta:**")
                     st.markdown(
-                        f"<h3 style='color: #4a154b; text-align: center;'>`LOLA-GLAM-OK-{p_id}-{oggi_str}`</h3>",
+                        f"<h3 style='color: #7b1fa2; text-align: center;'>`SEDUTA-OK-{p_id}-{oggi_str}`</h3>",
                         unsafe_allow_html=True,
                     )
             else:
@@ -1016,11 +996,11 @@ else:
                     utente_già_loggato = st.session_state.get("utente_loggato", None)
 
                     if utente_già_loggato:
-                        st.markdown(f"**Bentornata, {utente_già_loggato['nome']} {utente_già_loggato['cognome']}! ✨**")
+                        st.markdown(f"**Benvenuta, {utente_già_loggato['nome']} {utente_già_loggato['cognome']}! 💅**")
                         st.write("Clicca sul pulsante sottostante per confermare il tuo arrivo in salone.")
                         
                         with st.form("form_checkin_veloce"):
-                            submit_checkin_veloce = st.form_submit_button("✅ Conferma il mio Arrivo")
+                            submit_checkin_veloce = st.form_submit_button("✅ Conferma la mia Presenza")
 
                             if submit_checkin_veloce:
                                 cf_utente = utente_già_loggato["codice_fiscale"]
@@ -1038,7 +1018,7 @@ else:
                                     ).fetchall()
 
                                 if not appuntamenti_trovati:
-                                    st.error("❌ Nessun appuntamento trovato a tuo nome per oggi.")
+                                    st.error("❌ Nessuna prenotazione trovata a tuo nome per oggi.")
                                 else:
                                     appuntamento_valido = None
                                     for (
@@ -1052,7 +1032,7 @@ else:
                                         )
 
                                         inizio_finestra = (
-                                            dt_app - timedelta(minutes=30)
+                                            dt_app - timedelta(minutes=45)
                                         ).time()
                                         fine_finestra = (
                                             dt_app + timedelta(minutes=30)
@@ -1085,18 +1065,18 @@ else:
                                         st.rerun()
                                     else:
                                         st.error(
-                                            "⏳ Il check-in è consentito solo in prossimità dell'orario del tuo appuntamento."
+                                            "⏳ Il check-in è consentito solo nell'orario prossimo al tuo appuntamento."
                                         )
                     else:
                         st.markdown(
-                            "**Benvenuta in salone! ✨ Inserisci i dati del tuo account per confermare l'arrivo:**"
+                            "**Benvenuta in salone! 💅 Inserisci i dati del tuo account per confermare l'arrivo:**"
                         )
                         with st.form("form_checkin_cliente_automatico"):
                             chk_nome = st.text_input("Nome *")
                             chk_cognome = st.text_input("Cognome *")
-                            chk_password = st.text_input("Password *", type="password")
+                            chk_password = st.text_input("Password dell'account *", type="password")
                             submit_checkin = st.form_submit_button(
-                                "✅ Conferma il mio Arrivo"
+                                "✅ Conferma la mia Presenza"
                             )
 
                             if submit_checkin:
@@ -1104,7 +1084,7 @@ else:
                                 chk_cognome_clean = chk_cognome.strip().title()
 
                                 if not chk_nome_clean or not chk_cognome_clean or not chk_password:
-                                    st.error("Compila tutti i campi obbligatori.")
+                                    st.error("Per favore, compila tutti i campi.")
                                 else:
                                     utente_verificato, msg_err = login_utente(
                                         chk_nome_clean, chk_cognome_clean, chk_password
@@ -1128,7 +1108,7 @@ else:
                                             ).fetchall()
 
                                         if not appuntamenti_trovati:
-                                            st.error("❌ Nessun appuntamento trovato per oggi.")
+                                            st.error("❌ Nessuna prenotazione trovata a tuo nome per oggi.")
                                         else:
                                             appuntamento_valido = None
                                             for (
@@ -1142,7 +1122,7 @@ else:
                                                 )
 
                                                 inizio_finestra = (
-                                                    dt_app - timedelta(minutes=30)
+                                                    dt_app - timedelta(minutes=45)
                                                 ).time()
                                                 fine_finestra = (
                                                     dt_app + timedelta(minutes=30)
@@ -1175,11 +1155,11 @@ else:
                                                 st.rerun()
                                             else:
                                                 st.error(
-                                                    "⏳ Check-in consentito solo in prossimità dell'appuntamento."
+                                                    "⏳ Il check-in è consentito solo nell'orario prossimo al tuo appuntamento."
                                                 )
 
             st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("🏠 Torna alla Home"):
+            if st.button("🏠 Torna alla Home principale"):
                 if "checkin_successo" in st.session_state:
                     del st.session_state["checkin_successo"]
                 st.query_params.clear()
@@ -1195,12 +1175,12 @@ else:
                     st.image(logo_path, use_container_width=True)
 
             st.title("Lola's Glam House")
-            st.write("**Beauty & Makeup Lounge**")
-            st.markdown("#### 👤 Accedi o Registrati")
+            st.write("**Estetica & Benessere**")
+            st.markdown("#### 👤 Accedi al tuo account o registrati")
             st.markdown(
                 """
                 <div class="box-info-carino">
-                    ✨ Accedi o crea il tuo account per prenotare i tuoi trattamenti di bellezza in pochi istanti.
+                    ✨ Accedi o Registrati per poter prenotare il tuo prossimo trattamento con pochi semplici click.
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -1210,20 +1190,20 @@ else:
 
             with tab_login:
                 if st.session_state.get("vista_recupero", False):
-                    st.markdown("<h5 style='text-align: center; color: #4a154b;'>🔑 Recupero Password</h5>", unsafe_allow_html=True)
+                    st.markdown("<h5 style='text-align: center; color: #4a148c;'>🔑 Reimposta Password</h5>", unsafe_allow_html=True)
                     st.write("Inserisci Nome, Cognome, Codice Fiscale e la nuova password.")
                     with st.form("form_recupero_password"):
                         rec_nome = st.text_input("Nome *", key="rec_nome_input")
                         rec_cognome = st.text_input("Cognome *", key="rec_cognome_input")
                         rec_cf = st.text_input("Codice Fiscale *", key="rec_cf_input")
                         rec_nuova_pw = st.text_input("Nuova Password *", type="password", key="rec_nuova_pw_input")
-                        rec_conf_pw = st.text_input("Conferma Password *", type="password", key="rec_conf_pw_input")
+                        rec_conf_pw = st.text_input("Conferma Nuova Password *", type="password", key="rec_conf_pw_input")
                         
                         col_r1, col_r2 = st.columns(2)
                         with col_r1:
                             submit_esegui_recupero = st.form_submit_button("Aggiorna Password", use_container_width=True)
                         with col_r2:
-                            submit_torna_login = st.form_submit_button("Torna al Login", use_container_width=True)
+                            submit_torna_login = st.form_submit_button("Torna all'Accedi", use_container_width=True)
                             
                         if submit_torna_login:
                             st.session_state["vista_recupero"] = False
@@ -1284,18 +1264,13 @@ else:
 
                     if submit_registrazione:
                         if reg_password != reg_password_conferma:
-                            st.error("❌ Le password inserite non coincidono.")
+                            st.error("❌ Le due password inserite non coincidono.")
                         else:
                             successo, msg = registra_utente(
                                 reg_nome, reg_cognome, reg_cf, reg_password
                             )
                             if successo:
-                                utente_creato, _ = login_utente(reg_nome, reg_cognome, reg_password)
-                                if utente_creato:
-                                    st.session_state["utente_loggato"] = utente_creato
-                                    st.rerun()
-                                else:
-                                    st.success(msg)
+                                st.success(msg)
                             else:
                                 st.error(f"❌ {msg}")
 
@@ -1310,7 +1285,7 @@ else:
         st.markdown(
             f"""
             <p style="text-align: center;">
-                <strong>Beauty & Makeup Lounge</strong> &nbsp;|&nbsp; Ciao,
+                <strong>Estetica & Benessere</strong> &nbsp;|&nbsp; Ciao,
                 {st.session_state['utente_loggato']['nome']} 👋
             </p>
             """,
@@ -1318,7 +1293,7 @@ else:
         )
 
         tab1, tab2, tab3 = st.tabs([
-            "📅 Prenota Trattamento",
+            "📅 Prenota",
             "ℹ️ Info Salone",
             "📜 Regolamento",
         ])
@@ -1350,7 +1325,7 @@ else:
             data_formattata = pb["data_scelta"].strftime("%d/%m/%Y")
             
             st.session_state["booking_success_msg"] = (
-                f"🎉 APPUNTAMENTO CONFERMATO!\n\nGrazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore {pb['ora_scelta']} per il trattamento: {pb['trattamento']}."
+                f"🎉 PRENOTAZIONE CONFERMATA!\n\nGrazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore {pb['ora_scelta']} per il trattamento: {pb['trattamento']}."
             )
             st.session_state["ics_data"] = ics_string
             st.session_state["reset_form_flag"] = True
@@ -1361,7 +1336,7 @@ else:
 
         # TAB 1: PRENOTAZIONE
         with tab1:
-            st.markdown("### Modulo di Prenotazione Trattamenti")
+            st.markdown("### Modulo di Prenotazione")
 
             if st.session_state.get("reset_form_flag", False):
                 if "nome_2_input" in st.session_state:
@@ -1379,10 +1354,10 @@ else:
                     st.markdown("---")
                     st.markdown(
                         """
-                        <div style="background-color: #f4ecf7; padding: 22px; border-radius: 14px; border: 2px solid #7b2cbf; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                            <h3 style="color: #4a154b; margin-top: 0; font-size: 1.35rem;">📲 SALVA L'APPUNTAMENTO IN CALENDARIO</h3>
+                        <div style="background-color: #fcf0ff; padding: 22px; border-radius: 14px; border: 2px solid #7b1fa2; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                            <h3 style="color: #4a148c; margin-top: 0; font-size: 1.35rem;">📲 SALVA L'APPUNTAMENTO NEL TUO CALENDARIO</h3>
                             <p style="font-size: 1.05rem; color: #333; margin-bottom: 15px; line-height: 1.5;">
-                                Scarica il file dell'evento per aggiungerlo subito al calendario del tuo smartphone o computer!
+                                Clicca sul pulsante qui sotto per scaricare il file dell'evento. Bastano pochissimi secondi per salvarlo sul tuo telefono o computer!
                             </p>
                         </div>
                         """,
@@ -1392,21 +1367,21 @@ else:
                     st.download_button(
                         label="📅 Scarica e Salva in Calendario (.ics)",
                         data=st.session_state["ics_data"],
-                        file_name="appuntamento_lolas_glam.ics",
+                        file_name="appuntamento_lolas_glam_house.ics",
                         mime="text/calendar",
                         use_container_width=True
                     )
                     
-                    with st.expander("💡 Come salvare l'evento sul tuo dispositivo?"):
+                    with st.expander("💡 Come faccio a salvarlo nel calendario del mio telefono o PC?"):
                         st.markdown("""
-                        * **🍎 iPhone / iPad:** Tocca il file scaricato e seleziona **"Aggiungi a Calendario"**.
-                        * **🤖 Android:** Tocca la notifica di download o apri il file per aggiungerlo all'app Calendario.
-                        * **💻 PC:** Fai doppio clic sul file scaricato per aprirlo con Outlook o Apple Calendar.
+                        * **🍎 iPhone / iPad:** Tocca il file scaricato e seleziona **"Aggiungi a Calendario"** nel menu che compare.
+                        * **🤖 Android:** Tocca la notifica di download appena completato (o apri il file dalla cartella Download) e l'app Calendario ti chiederà di confermare l'aggiunta.
+                        * **💻 PC (Windows / Mac):** Fai un doppio clic sul file scaricato; si aprirà automaticamente il tuo programma di posta o calendario predefinito (Outlook o Apple Calendar) per memorizzarlo.
                         """)
                     
                     st.markdown("---")
 
-                if st.button("⬅️ Prenota un Altro Trattamento"):
+                if st.button("⬅️ Torna Indietro / Effettua Nuova Prenotazione"):
                     del st.session_state["booking_success_msg"]
                     if "ics_data" in st.session_state:
                         del st.session_state["ics_data"]
@@ -1424,14 +1399,15 @@ else:
                     )
 
                     trattamento = st.selectbox(
-                        "Seleziona Servizio / Trattamento *",
+                        "Seleziona Trattamento Estetico *",
                         [
-                            "Manicure Deluxe Semipermanente / Gel",
-                            "Pedicure Curativo & Estetico",
-                            "Laminazione Ciglia & Sopracciglia",
-                            "Makeup Professionale (Sposa / Evento)",
-                            "Trattamento Viso Glow & Skincare",
-                            "Seduta Doppia (Amiche in Salone)",
+                            "Manicure Semipermanente",
+                            "Pedicure Estetico",
+                            "Pulizia Viso Profonda",
+                            "Laminazione Ciglia e Sopracciglia",
+                            "Trattamento Viso Anti-age",
+                            "Massaggio Corpo Relax",
+                            "Trattamento di Coppia",
                         ],
                         key="trattamento_input",
                     )
@@ -1439,9 +1415,9 @@ else:
                     nome_2 = ""
                     cognome_2 = ""
                     codice_fiscale_2 = ""
-                    if trattamento == "Seduta Doppia (Amiche in Salone)":
+                    if trattamento == "Trattamento di Coppia":
                         st.markdown("---")
-                        st.markdown("##### 👥 Dati Seconda Persona")
+                        st.markdown("##### 👥 Dati Seconda Persona (Coppia)")
                         col_n4, col_n5, col_n6 = st.columns([2, 2, 3])
                         with col_n4:
                             nome_2 = st.text_input("Nome Seconda Persona *", key="nome_2_input")
@@ -1493,7 +1469,7 @@ else:
                                 if cf_curr_2 and (p_cf1 == cf_curr_2 or p_cf2 == cf_curr_2):
                                     utente_gia_prenotato = True
 
-                                if p_trattamento == "Seduta Doppia (Amiche in Salone)":
+                                if p_trattamento == "Trattamento di Coppia":
                                     posti_occupati += 2
                                 else:
                                     posti_occupati += 1
@@ -1501,7 +1477,7 @@ else:
                         if slot_bloccato or utente_gia_prenotato:
                             continue
 
-                        if trattamento == "Seduta Doppia (Amiche in Salone)":
+                        if trattamento == "Trattamento di Coppia":
                             if posti_occupati > 0:
                                 continue
                         else:
@@ -1536,7 +1512,7 @@ else:
                     cognome = cognome.strip().title()
                     codice_fiscale = codice_fiscale.strip().upper()
                     
-                    if trattamento == "Seduta Doppia (Amiche in Salone)":
+                    if trattamento == "Trattamento di Coppia":
                         nome_2 = nome_2.strip().title()
                         cognome_2 = cognome_2.strip().title()
                         codice_fiscale_2 = codice_fiscale_2.strip().upper()
@@ -1551,11 +1527,11 @@ else:
                     
                     cf_2_valido = True
                     cf_2_msg = ""
-                    if trattamento == "Seduta Doppia (Amiche in Salone)":
+                    if trattamento == "Trattamento di Coppia":
                         cf_2_valido, cf_2_msg = valida_codice_fiscale(nome_2, cognome_2, codice_fiscale_2)
 
                     cf_principale = codice_fiscale.strip().upper()
-                    cf_secondario = codice_fiscale_2.strip().upper() if trattamento == "Seduta Doppia (Amiche in Salone)" else None
+                    cf_secondario = codice_fiscale_2.strip().upper() if trattamento == "Trattamento di Coppia" else None
 
                     with engine.begin() as conn_dupl:
                         gia_presente = conn_dupl.execute(
@@ -1571,21 +1547,21 @@ else:
                         ).fetchone()
 
                     if is_banned_now:
-                        st.error("⛔ Spiacenti, questo dispositivo è stato limitato.")
+                        st.error("⛔ Spiacenti, questo dispositivo è stato bloccato.")
                     elif not nome.strip() or not cognome.strip() or not codice_fiscale.strip():
-                        st.error("Inserisci nome, cognome e codice fiscale.")
+                        st.error("Per favore inserisci nome, cognome e codice fiscale.")
                     elif not cf_valido:
                         st.error(f"❌ **Codice Fiscale non valido per {nome} {cognome}:** {cf_msg}")
-                    elif trattamento == "Seduta Doppia (Amiche in Salone)" and (not nome_2.strip() or not cognome_2.strip() or not codice_fiscale_2.strip()):
-                        st.error("Inserisci tutti i dati richiesti per la seconda persona.")
-                    elif trattamento == "Seduta Doppia (Amiche in Salone)" and not cf_2_valido:
+                    elif trattamento == "Trattamento di Coppia" and (not nome_2.strip() or not cognome_2.strip() or not codice_fiscale_2.strip()):
+                        st.error("Per favore inserisci tutti i dati anche per la seconda persona.")
+                    elif trattamento == "Trattamento di Coppia" and not cf_2_valido:
                         st.error(f"❌ **Codice Fiscale non valido per la seconda persona ({nome_2} {cognome_2}):** {cf_2_msg}")
                     elif gia_presente:
-                        st.error("⚠️ Hai già un appuntamento attivo in questo giorno e orario.")
+                        st.error("⚠️ Hai già una prenotazione attiva in questo giorno e orario (oppure una delle partecipanti risulta già registrata nello stesso slot).")
                     elif not ora_scelta or "Tutto occupato" in ora_scelta or "Già prenotato" in ora_scelta:
                         st.error("Spiacenti, non ci sono orari disponibili per la data selezionata.")
                     else:
-                        if trattamento == "Seduta Doppia (Amiche in Salone)":
+                        if trattamento == "Trattamento di Coppia":
                             nome_completo = f"{nome.strip()} {cognome.strip()} & {nome_2.strip()} {cognome_2.strip()}"
                         else:
                             nome_completo = f"{nome.strip()} {cognome.strip()}"
@@ -1605,7 +1581,7 @@ else:
                             ):
                                 slot_occupato = True
                                 break
-                            elif p_trattamento == "Seduta Doppia (Amiche in Salone)":
+                            elif p_trattamento == "Trattamento di Coppia":
                                 posti_occupati += 2
                             else:
                                 posti_occupati += 1
@@ -1613,13 +1589,13 @@ else:
                         impossibile_prenotare = False
                         if slot_occupato:
                             impossibile_prenotare = True
-                        elif trattamento == "Seduta Doppia (Amiche in Salone)" and posti_occupati > 0:
+                        elif trattamento == "Trattamento di Coppia" and posti_occupati > 0:
                             impossibile_prenotare = True
-                        elif trattamento != "Seduta Doppia (Amiche in Salone)" and posti_occupati >= 2:
+                        elif trattamento != "Trattamento di Coppia" and posti_occupati >= 2:
                             impossibile_prenotare = True
 
                         if impossibile_prenotare:
-                            st.error("⚠️ Spiacenti, questo orario è stato appena occupato da un'altra cliente!")
+                            st.error("⚠️ Spiacenti, questo orario è stato appena occupato! Riprova con un altro orario.")
                         else:
                             st.session_state["pending_booking"] = {
                                 "nome_completo": nome_completo,
@@ -1639,46 +1615,48 @@ else:
         with tab2:
             st.markdown("### ℹ️ Informazioni su Lola's Glam House")
             st.markdown(
-                "Benvenuta nel salone **Lola's Glam House**, il punto di riferimento per la cura della persona, nail art, makeup professionale e trattamenti estetici avanzati."
+                "Benvenuta nel salone di bellezza **Lola's Glam House**, il tuo spazio esclusivo dedicato alla cura, alla bellezza e al benessere di viso e corpo."
             )
-            st.markdown("📍 **Indirizzo:** Via della Bellezza 12, Catania")
+            st.markdown("📍 **Indirizzo:** Via della Bellezza 12, Città")
             st.markdown(
-                "📞 **Telefono / WhatsApp:** [+39 340 0000000](tel:+39340000000) o [Scrivici su WhatsApp](https://wa.me/39340000000)"
-            )
-            st.markdown(
-                "📧 **Email:** [info@lolasglamhouse.it](mailto:info@lolasglamhouse.it)"
+                "📞 **Telefono / WhatsApp:** [+39 300 0000000](tel:+39300000000) o [Scrivici su WhatsApp](https://wa.me/39300000000)"
             )
             st.markdown(
-                "📸 Seguici su [Instagram](https://www.instagram.com/) per scoprire i nostri lavori e le ultime tendenze glam!"
+                "📧 **Email:** [lolasglamhouse@outlook.it](mailto:lolasglamhouse@outlook.it)"
+            )
+            st.markdown(
+                "📸 Seguici su [Instagram](https://www.instagram.com/lolasglamhouse/) per scoprire tutti i nostri lavori, promozioni e novità del salone!"
             )
 
             st.markdown("---")
-            st.markdown("#### 💎 Pacchetti & Listino Principale")
+            st.markdown("#### 📋 Trattamenti & Pacchetti")
             st.markdown("""
-                * ✨ **Gift Card Glam:** Buoni regalo personalizzati per ogni occasione
-                * 💅 **Pacchetto Sposa:** Prova trucco + Makeup giorno evento + Manicure Deluxe
-                * 🎟️ **Glam Pass (Abbonamento Mensile Unghie):** 3 trattamenti unghie inclusi al mese
+                * 🏷️ **Pacchetto Sposa / Evento:** Trattamenti viso e corpo personalizzati
+                * 🏷️ **Carnet 5 Manicure:** Sconto speciale sui trattamenti unghie
+                * 🏷️ **Promozione Mese:** Sconti dedicati ai trattamenti stagionali
+                * 🏷️ **Servizi Singoli:** Disponibili su prenotazione tramite app
                 """)
 
             st.markdown("---")
-            st.markdown("#### 📱 Installa la Web App")
+            st.markdown("#### 📱 Installa la Web App sullo Smartphone")
             st.markdown("""
-                Aggiungi la web app alla schermata Home del tuo smartphone per prenotare in un tap:
-                * **🍎 iPhone / iPad (Safari):** Tocca l'icona di condivisione e seleziona **"Aggiungi alla schermata Home"**.
-                * **🤖 Android (Chrome):** Tocca i tre puntini in alto a destra e seleziona **"Aggiungi a schermata Home"**.
+                Puoi aggiungere questa applicazione alla schermata principale del tuo telefono per accedere velocemente alle prenotazioni:
+                * **🍎 iPhone / iPad (Safari):** Tocca l'icona di condivisione nel menu in basso e seleziona **"Aggiungi alla schermata Home"**.
+                * **🤖 Android (Chrome):** Tocca i tre puntini in alto a destra nel browser e seleziona **"Aggiungi a schermata Home"** o **"Installa app"**.
                 """)
 
         # TAB 3: REGOLAMENTO
         with tab3:
             st.markdown("### 📜 Regolamento del Salone")
             st.markdown("""
-                * 🕒 **Puntualità:** Si raccomanda di arrivare puntuali all'orario stabilito.
-                * 💅 **Igiene e Sicurezza:** Strumenti sterilizzati a norma di legge per ogni cliente.
-                * 📵 **Relax:** Invita i dispositivi in modalità silenziosa per goderti il tuo momento di relax.
-                * ⏱️ **Cancellazioni:** Si richiede un preavviso di almeno 24 ore per eventuali disdette.
+                * ⏱️ **Durata Trattamento:** Varia in base al servizio scelto.
+                * 🕒 **Puntualità:** Si raccomanda la massima puntualità.
+                * 🧴 **Cura di sé:** Vi invitiamo a segnalare eventuali allergie, sensibilità o condizioni particolari prima dell'inizio.
+                * 📵 **Cellulari:** Modalità silenziosa consigliata per godersi il relax.
+                * ⏱️ **Disdette:** Preavviso minimo di 24 ore, in caso contrario l'appuntamento potrebbe essere conteggiato.
                 """)
 
-        # Footer: Logout
+        # --- Footer: pulsante di logout, in basso a sinistra ---
         st.markdown("<br>", unsafe_allow_html=True)
         col_footer_1, col_footer_2 = st.columns([1, 3])
         with col_footer_1:
