@@ -76,12 +76,12 @@ def init_db():
 
 init_db()
 
-# Stile CSS professionale con supporto per il font Great Vibes sul titolo principale (h1) e #df68f7 sulle selectboxes
+# Stile CSS professionale con Great Vibes (h1 principale) e Playfair Display (sidebar admin)
 st.markdown(
     """
     <style>
-    /* Importazione del font Great Vibes da Google Fonts */
-    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+    /* Importazione dei font Great Vibes e Playfair Display da Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
     /* Sfondo generale pulito basato su #f2b3ff */
     .stApp {
@@ -202,6 +202,13 @@ st.markdown(
         text-align: center;
     }
     
+    /* Applicazione del font Playfair Display ai titoli presenti nella barra laterale (Admin) */
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+        font-family: 'Playfair Display', serif !important;
+        font-weight: 700 !important;
+        letter-spacing: 0px !important;
+    }
+
     /* Box informativo in stile pastello con #f2b3ff */
     .box-info-carino {
         background: linear-gradient(135deg, #fcf0ff 0%, #f8e1ff) !important;
