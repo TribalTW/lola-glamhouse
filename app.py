@@ -39,7 +39,6 @@ def init_db():
                 trattamento TEXT NOT NULL,
                 data_creazione TEXT NOT NULL,
                 device_id TEXT,
-                stato_presenza TEXT DEFAULT 'Assente',
                 codice_fiscale TEXT,
                 codice_fiscale_2 TEXT
             )
@@ -47,7 +46,6 @@ def init_db():
         
         for col, col_type in [
             ("device_id", "TEXT"),
-            ("stato_presenza", "TEXT DEFAULT 'Assente'"),
             ("codice_fiscale", "TEXT"),
             ("codice_fiscale_2", "TEXT")
         ]:
@@ -80,16 +78,13 @@ init_db()
 st.markdown(
     """
     <style>
-    /* Importazione dei font Great Vibes e Playfair Display da Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
-    /* Sfondo generale pulito basato su #f2b3ff */
     .stApp {
         background-color: #fdf5ff;
         font-family: 'Inter', sans-serif;
     }
 
-    /* Container professionali con bordi arrotondati, sfumatura delicata e ombreggiature con animazione */
     div.stVerticalBlockBorderWrapper, div[data-testid="stVerticalBlockBorderWrapper"] {
         background: linear-gradient(135deg, #ffffff 0%, #fcf0ff 100%) !important;
         border: 1px solid #f2b3ff !important;
@@ -108,7 +103,6 @@ st.markdown(
         background-color: transparent !important;
     }
     
-    /* Campi di input moderni */
     .stTextInput input, .stDateInput input, .stNumberInput input {
         background-color: #FFFFFF !important;
         border-radius: 10px !important;
@@ -117,7 +111,6 @@ st.markdown(
         transition: all 0.2s ease-in-out !important;
     }
 
-    /* Tendine (Selectbox) con il colore richiesto #df68f7 */
     .stSelectbox > div > div {
         background-color: #FFFFFF !important;
         border-radius: 10px !important;
@@ -132,7 +125,6 @@ st.markdown(
         box-shadow: 0 0 0 3px rgba(123, 31, 162, 0.15) !important;
     }
     
-    /* Pulsanti professionali con effetti di transizione e ombreggiatura */
     div.stButton > button, div.stDownloadButton > button, div.stFormSubmitButton > button {
         background: linear-gradient(135deg, #7b1fa2 0%, #4a148c 100%) !important;
         color: white !important;
@@ -157,34 +149,20 @@ st.markdown(
         transform: translateY(-2px);
     }
 
-    div.stButton > button:active, div.stFormSubmitButton > button:active {
-        transform: translateY(0px);
-        box-shadow: 0 2px 10px rgba(123, 31, 162, 0.3) !important;
-    }
-
-    /* Stile specifico per il pulsante secondario (Password dimenticata?) nella seconda colonna */
-    div[data-testid="stColumn"]:nth-child(2) div.stFormSubmitButton > button {
+    div.stColumn:nth-child(2) div.stFormSubmitButton > button {
         background: #fcf0ff !important;
         color: #4a148c !important;
         border: 1.5px solid #f2b3ff !important;
         box-shadow: 0 4px 15px rgba(242, 179, 255, 0.2) !important;
     }
 
-    div[data-testid="stColumn"]:nth-child(2) div.stFormSubmitButton > button:hover {
+    div.stColumn:nth-child(2) div.stFormSubmitButton > button:hover {
         background: #f8e1ff !important;
         color: #4a148c !important;
         box-shadow: 0 6px 20px rgba(242, 179, 255, 0.35) !important;
         transform: translateY(-2px);
     }
     
-    div[data-testid="stColumn"] div.stButton > button.btn-aggiorna {
-        padding: 8px 16px !important;
-        font-size: 0.9rem !important;
-        width: auto !important;
-        white-space: nowrap !important;
-    }
-    
-    /* Tipografia e Titoli - Applicazione del font Great Vibes al titolo principale (h1) */
     h1 {
         font-family: 'Great Vibes', cursive !important;
         color: #4a148c !important;
@@ -202,22 +180,19 @@ st.markdown(
         text-align: center;
     }
     
-    /* Modifica dimensione e colore per "Area Riservata (Admin)" */
     [data-testid="stSidebar"] h1 {
         font-family: 'Playfair Display', serif !important;
         font-weight: 700 !important;
-        font-size: 1.6rem !important;   /* Modifica qui la dimensione desiderata */
-        color: #FFFFFF !important;      /* Modifica qui il colore desiderato */
+        font-size: 1.6rem !important;
+        color: #FFFFFF !important;
     }
 
-    /* Lascia inalterati h2 e h3 della sidebar se necessario */
     [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
         font-family: 'Playfair Display', serif !important;
         font-weight: 700 !important;
         letter-spacing: 0px !important;
     }
 
-    /* Box informativo in stile pastello con #f2b3ff */
     .box-info-carino {
         background: linear-gradient(135deg, #fcf0ff 0%, #f8e1ff) !important;
         border: 1px solid #f2b3ff !important;
@@ -230,7 +205,6 @@ st.markdown(
         box-shadow: 0 4px 15px rgba(242, 179, 255, 0.2) !important;
     }
     
-    /* Stile delle Tab di navigazione - Uniforme e a capsula */
     .stTabs, .stTabs [data-baseweb="tab-list"], .stTabs div {
         overflow: visible !important;
     }
@@ -275,17 +249,6 @@ st.markdown(
         z-index: 999 !important;
     }
 
-    @media (max-width: 768px) {
-        .stTabs [data-baseweb="tab"] {
-            padding: 8px 14px !important;
-            font-size: 13px !important;
-            min-width: auto !important;
-        }
-        .stTabs [aria-selected="true"] {
-            padding: 8px 14px !important;
-        }
-    }
-
     .stCaption, p {
         text-align: center;
     }
@@ -297,14 +260,12 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-
 # Funzioni di supporto per la verifica del Codice Fiscale
 def estrai_consonanti_vocali(testo):
     testo = testo.upper()
     consonanti = "".join([c for c in testo if c.isalpha() and c not in "AEIOU"])
     vocali = "".join([c for c in testo if c.isalpha() and c in "AEIOU"])
     return consonanti, vocali
-
 
 def calcola_iniziali_cf(cognome, nome):
     c_cons, c_voc = estrai_consonanti_vocali(cognome)
@@ -318,8 +279,6 @@ def calcola_iniziali_cf(cognome, nome):
         
     return cognome_cf, nome_cf
 
-
-# Tabelle ufficiali per il calcolo del carattere di controllo del Codice Fiscale
 _VALORI_DISPARI = {
     "0": 1, "1": 0, "2": 5, "3": 7, "4": 9, "5": 13, "6": 15, "7": 17, "8": 19, "9": 21,
     "A": 1, "B": 0, "C": 5, "D": 7, "E": 9, "F": 13, "G": 15, "H": 17, "I": 19, "J": 21,
@@ -334,7 +293,6 @@ _VALORI_PARI = {
 }
 _LETTERE_RESTO = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-
 def calcola_carattere_controllo_cf(cf_15):
     totale = 0
     for i, carattere in enumerate(cf_15):
@@ -344,7 +302,6 @@ def calcola_carattere_controllo_cf(cf_15):
         else:
             totale += _VALORI_PARI[carattere]
     return _LETTERE_RESTO[totale % 26]
-
 
 def valida_codice_fiscale(nome, cognome, cf):
     cf = cf.strip().upper()
@@ -364,8 +321,7 @@ def valida_codice_fiscale(nome, cognome, cf):
 
     return True, ""
 
-
-# --- Funzioni di supporto per Account Utenti (Registrazione/Login/Recupero) ---
+# Gestione Account Utenti
 def hash_password(password, salt=None):
     if salt is None:
         salt = secrets.token_hex(16)
@@ -374,11 +330,9 @@ def hash_password(password, salt=None):
     ).hex()
     return salt, pwd_hash
 
-
 def verifica_password(password, salt, pwd_hash_atteso):
     _, pwd_hash_calcolato = hash_password(password, salt)
     return secrets.compare_digest(pwd_hash_calcolato, pwd_hash_atteso)
-
 
 def registra_utente(nome, cognome, cf, password):
     salt, pwd_hash = hash_password(password)
@@ -412,7 +366,6 @@ def registra_utente(nome, cognome, cf, password):
     except Exception as e:
         return False, str(e)
 
-
 def login_utente(nome, cognome, password):
     try:
         with engine.begin() as conn:
@@ -441,7 +394,6 @@ def login_utente(nome, cognome, password):
                 return None, "Password errata."
     except Exception as e:
         return None, str(e)
-
 
 def aggiorna_password_utente(nome, cognome, cf, nuova_password):
     try:
@@ -472,7 +424,6 @@ def aggiorna_password_utente(nome, cognome, cf, nuova_password):
     except Exception as e:
         return False, str(e)
 
-
 def get_orari_per_data(data):
     if isinstance(data, str):
         d = datetime.strptime(data, "%Y-%m-%d").date()
@@ -489,7 +440,6 @@ def get_orari_per_data(data):
             "15:00", "16:00", "17:00", "18:00", "19:00",
         ]
 
-
 def get_client_device_id():
     if "device_id_internale" not in st.session_state:
         if "dev_id" in st.query_params and st.query_params["dev_id"].strip():
@@ -502,14 +452,12 @@ def get_client_device_id():
             st.session_state["device_id_internale"] = f"device_{unique_id}"
     return st.session_state["device_id_internale"]
 
-
 def get_current_time_local():
     try:
         local_tz = ZoneInfo("Europe/Rome")
         return datetime.now(local_tz)
     except Exception:
         return datetime.now()
-
 
 def genera_file_ics(nome_trattamento, data_str, ora_str):
     dt_inizio = datetime.strptime(f"{data_str} {ora_str}", "%Y-%m-%d %H:%M")
@@ -538,7 +486,6 @@ END:VEVENT
 END:VCALENDAR"""
     return ics_content
 
-
 @st.dialog("📜 Regolamento del Salone - Termini di Servizio")
 def popup_regolamento():
     st.markdown(
@@ -558,7 +505,6 @@ def popup_regolamento():
         st.session_state["mostra_dialog_regolamento"] = False
         st.rerun()
 
-
 logo_path = None
 for possible_name in [
     "logo.png", "logo.PNG", "logo.jpg", "logo.jpeg", "logo.png.png",
@@ -566,7 +512,6 @@ for possible_name in [
     if os.path.exists(possible_name):
         logo_path = possible_name
         break
-
 
 # --- BARRA LATERALE (Admin & Logo) ---
 if logo_path:
@@ -595,7 +540,6 @@ if st.session_state["admin_logged_in"]:
         st.session_state["admin_logged_in"] = False
         st.rerun()
 
-
 # --- VISTA 1: PANNELLO AMMINISTRATORE ---
 if st.session_state["admin_logged_in"]:
     st.title("📊 Gestione Appuntamenti & Salone (Admin)")
@@ -608,7 +552,7 @@ if st.session_state["admin_logged_in"]:
     with st.container(border=True):
         st.subheader("📋 Elenco Prenotazioni & Codici Fiscali")
         df = pd.read_sql_query(
-            "SELECT id, codice_fiscale, codice_fiscale_2, data, ora, trattamento, stato_presenza, device_id FROM prenotazioni ORDER BY data DESC, ora ASC",
+            "SELECT id, codice_fiscale, codice_fiscale_2, data, ora, trattamento, device_id FROM prenotazioni ORDER BY data DESC, ora ASC",
             engine,
         )
 
@@ -616,137 +560,6 @@ if st.session_state["admin_logged_in"]:
             st.dataframe(df, use_container_width=True)
         else:
             st.info("Nessuna prenotazione presente nel database.")
-
-    with st.container(border=True):
-        st.subheader("✅ Spunta Presenze Veloci & Codici Seduta")
-        st.write(
-            "Seleziona la data: i clienti partono di default come assenti. "
-            "**Metti la spunta solo a chi si è presentato** e clicca salva per generare i codici seduta."
-        )
-
-        data_presenze = st.date_input(
-            "Data da verificare", value=datetime.today(), key="data_presenze_input"
-        )
-        data_presenze_str = str(data_presenze)
-
-        with engine.begin() as conn:
-            appuntamenti_giorno = conn.execute(
-                text("SELECT id, nome, trattamento, ora, stato_presenza FROM prenotazioni WHERE data = :data AND device_id != 'SYSTEM' ORDER BY ora ASC"),
-                {"data": data_presenze_str}
-            ).fetchall()
-
-        if appuntamenti_giorno:
-            with st.form("form_presenze"):
-                st.markdown(
-                    f"**Appuntamenti del {data_presenze.strftime('%d/%m/%Y')}:**"
-                )
-                st.markdown("---")
-
-                presenze_dict = {}
-                for (
-                    app_id, nome_cli, tratt_cli, ora_cli, stato_attuale,
-                ) in appuntamenti_giorno:
-                    col_p1, col_p2 = st.columns([3, 2])
-                    is_checked_default = stato_attuale == "Presente"
-
-                    with col_p1:
-                        is_presente = st.checkbox(
-                            f"{ora_cli} - {nome_cli}",
-                            value=is_checked_default,
-                            key=f"pres_{app_id}",
-                        )
-                        st.markdown(
-                            f"<div style='color: #666; font-size: 0.85em; margin-top: -8px; margin-left: 24px;'>{tratt_cli}</div>",
-                            unsafe_allow_html=True,
-                        )
-                        presenze_dict[app_id] = (
-                            "Presente" if is_presente else "Assente"
-                        )
-
-                    with col_p2:
-                        if is_presente:
-                            codice_seduta = f"SEDUTA-OK-{app_id}-{data_presenze_str}"
-                            st.markdown(
-                                f"<code style='color: #7b1fa2; font-weight: bold;'>{codice_seduta}</code>",
-                                unsafe_allow_html=True,
-                            )
-                        else:
-                            st.markdown(
-                                "<span style='color: gray;'>Assente</span>",
-                                unsafe_allow_html=True,
-                            )
-
-                    st.markdown("---")
-
-                submit_presenze = st.form_submit_button(
-                    "💾 Salva Presenze & Genera Codici"
-                )
-                if submit_presenze:
-                    with engine.begin() as conn:
-                        for app_id, nuovo_stato in presenze_dict.items():
-                            conn.execute(
-                                text("UPDATE prenotazioni SET stato_presenza = :stato WHERE id = :pid"),
-                                {"stato": nuovo_stato, "pid": app_id}
-                            )
-                    st.success("Presenze salvate con successo!")
-                    st.rerun()
-        else:
-            st.info("Nessun appuntamento cliente registrato per la data selezionata.")
-
-        st.markdown("---")
-        st.markdown("#### 📈 Riepilogo e Calcolo Totale Trattamenti (Gestionale)")
-        if st.button("📊 Calcola Statistiche e Trattamenti Svolti per Cliente"):
-            df_stat = pd.read_sql_query(
-                """
-                SELECT nome, 
-                       COUNT(CASE WHEN stato_presenza = 'Presente' THEN 1 END) AS trattamenti_effettuati,
-                       COUNT(CASE WHEN stato_presenza = 'Assente' THEN 1 END) AS trattamenti_assenze,
-                       COUNT(*) AS totale_prenotazioni
-                FROM prenotazioni 
-                WHERE device_id != 'SYSTEM'
-                GROUP BY nome
-                ORDER BY trattamenti_effettuati DESC
-            """,
-                engine,
-            )
-            if not df_stat.empty:
-                st.dataframe(df_stat, use_container_width=True)
-                st.success("💡 Report calcolato con successo!")
-            else:
-                st.info("Nastro dati insufficiente per le statistiche.")
-
-    with st.container(border=True):
-        st.subheader("📷 QR Code Check-in Ingresso Salone")
-        st.write(
-            "Mostra o stampa questo QR code da posizionare all'ingresso del salone. "
-            "Quando arriva la cliente potrà inquadrarlo per registrare la presenza."
-        )
-
-        components.html(
-            """
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: #ffffff; padding: 20px; border-radius: 12px; border: 2px dashed #7b1fa2;">
-            <h4 style="color: #4a148c; margin-bottom: 10px;">Inquadra per Check-in in Salone 💅</h4>
-            <div id="qrcode" style="margin: 15px;"></div>
-            <p style="font-size: 12px; color: #555; text-align: center;">Inquadra con la fotocamera dello smartphone all'arrivo in salone.</p>
-        </div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-        <script>
-        (function() {
-            var parentUrl = window.parent.location.href.split('?')[0];
-            var checkinUrl = parentUrl + '?action=checkin';
-            
-            var qr = new QRious({
-                element: document.createElement('canvas'),
-                value: checkinUrl,
-                size: 200
-            });
-            document.getElementById('qrcode').appendChild(qr.element);
-        })();
-        </script>
-        """,
-            height=320,
-            width=None,
-        )
 
     with st.container(border=True):
         st.subheader("🔓 Gestione Chiusure e Sblocchi Salone")
@@ -810,11 +623,11 @@ if st.session_state["admin_logged_in"]:
                                 ).fetchone()
                                 if not res:
                                     conn.execute(
-                                        text("INSERT INTO prenotazioni (nome, data, ora, trattamento, data_creazione, device_id, stato_presenza) VALUES (:n, :d, :o, :t, :dc, :di, :sp)"),
+                                        text("INSERT INTO prenotazioni (nome, data, ora, trattamento, data_creazione, device_id) VALUES (:n, :d, :o, :t, :dc, :di)"),
                                         {
                                             "n": "🔒 SALONE CHIUSO", "d": d_str, "o": h,
                                             "t": "Chiusura Admin", "dc": ora_attuale_str,
-                                            "di": "SYSTEM", "sp": "Chiuso"
+                                            "di": "SYSTEM"
                                         }
                                     )
                         else:
@@ -824,11 +637,11 @@ if st.session_state["admin_logged_in"]:
                             ).fetchone()
                             if not res:
                                 conn.execute(
-                                    text("INSERT INTO prenotazioni (nome, data, ora, trattamento, data_creazione, device_id, stato_presenza) VALUES (:n, :d, :o, :t, :dc, :di, :sp)"),
+                                    text("INSERT INTO prenotazioni (nome, data, ora, trattamento, data_creazione, device_id) VALUES (:n, :d, :o, :t, :dc, :di)"),
                                     {
                                         "n": "🔒 ORARIO CHIUSO", "d": d_str, "o": ora_intervallo,
                                         "t": "Chiusura Admin", "dc": ora_attuale_str,
-                                        "di": "SYSTEM", "sp": "Chiuso"
+                                        "di": "SYSTEM"
                                     }
                                 )
                     st.success("Blocco applicato con successo!")
@@ -982,7 +795,6 @@ if st.session_state["admin_logged_in"]:
         else:
             st.info("Nessun account cliente registrato al momento.")
 
-
 # --- VISTA 2: PAGINA PRINCIPALE CLIENTE ---
 else:
     client_device_id = get_client_device_id()
@@ -1000,211 +812,6 @@ else:
                 st.image(logo_path, use_container_width=True)
         st.error("⛔ Accesso negato: questo dispositivo è stato bloccato.")
     else:
-        if st.query_params.get("action") == "checkin":
-            if logo_path:
-                c1, c2, c3 = st.columns([1, 2, 1])
-                with c2:
-                    st.image(logo_path, use_container_width=True)
-
-            st.title("📍 Check-in Ingresso Salone")
-            
-            current_dt = get_current_time_local()
-            oggi_str = current_dt.strftime("%Y-%m-%d")
-            current_time = current_dt.time()
-
-            if "checkin_successo" in st.session_state:
-                p_id, p_nome, p_tratt, p_ora, oggi_str = st.session_state[
-                    "checkin_successo"
-                ]
-                st.balloons()
-                with st.container(border=True):
-                    st.markdown(f"### Ciao {p_nome}! 💅")
-                    st.success("🎉 **Presenza registrata con successo!**")
-                    st.write(
-                        f"Ho registrato il tuo arrivo per il trattamento di **{p_tratt}** delle ore **{p_ora}**."
-                    )
-                    st.markdown("---")
-                    st.markdown(f"**Il tuo Codice Seduta:**")
-                    st.markdown(
-                        f"<h3 style='color: #7b1fa2; text-align: center;'>`SEDUTA-OK-{p_id}-{oggi_str}`</h3>",
-                        unsafe_allow_html=True,
-                    )
-            else:
-                with st.container(border=True):
-                    utente_già_loggato = st.session_state.get("utente_loggato", None)
-
-                    if utente_già_loggato:
-                        st.markdown(f"**Benvenuta, {utente_già_loggato['nome']} {utente_già_loggato['cognome']}! 💅**")
-                        st.write("Clicca sul pulsante sottostante per confermare il tuo arrivo in salone.")
-                        
-                        with st.form("form_checkin_veloce"):
-                            submit_checkin_veloce = st.form_submit_button("✅ Conferma la mia Presenza")
-
-                            if submit_checkin_veloce:
-                                cf_utente = utente_già_loggato["codice_fiscale"]
-
-                                with engine.begin() as conn:
-                                    appuntamenti_trovati = conn.execute(
-                                        text("""
-                                            SELECT id, nome, trattamento, ora, stato_presenza 
-                                            FROM prenotazioni 
-                                            WHERE data = :data 
-                                              AND device_id != 'SYSTEM' 
-                                              AND (UPPER(codice_fiscale) = :cf OR UPPER(codice_fiscale_2) = :cf)
-                                        """),
-                                        {"data": oggi_str, "cf": cf_utente}
-                                    ).fetchall()
-
-                                if not appuntamenti_trovati:
-                                    st.error("❌ Nessuna prenotazione trovata a tuo nome per oggi.")
-                                else:
-                                    appuntamento_valido = None
-                                    for (
-                                        p_id, p_nome, p_tratt, p_ora, p_stato,
-                                    ) in appuntamenti_trovati:
-                                        ora_app = datetime.strptime(
-                                            p_ora, "%H:%M"
-                                        ).time()
-                                        dt_app = datetime.combine(
-                                            datetime.today(), ora_app
-                                        )
-
-                                        inizio_finestra = (
-                                            dt_app - timedelta(minutes=45)
-                                        ).time()
-                                        fine_finestra = (
-                                            dt_app + timedelta(minutes=30)
-                                        ).time()
-
-                                        if (
-                                            inizio_finestra
-                                            <= current_time
-                                            <= fine_finestra
-                                        ):
-                                            appuntamento_valido = (
-                                                p_id, p_nome, p_tratt, p_ora
-                                            )
-                                            break
-
-                                    if appuntamento_valido:
-                                        p_id, p_nome, p_tratt, p_ora = (
-                                            appuntamento_valido
-                                        )
-
-                                        with engine.begin() as conn:
-                                            conn.execute(
-                                                text("UPDATE prenotazioni SET stato_presenza = 'Presente' WHERE id = :pid"),
-                                                {"pid": p_id}
-                                            )
-
-                                        st.session_state["checkin_successo"] = (
-                                            p_id, p_nome, p_tratt, p_ora, oggi_str,
-                                        )
-                                        st.rerun()
-                                    else:
-                                        st.error(
-                                            "⏳ Il check-in è consentito solo nell'orario prossimo al tuo appuntamento."
-                                        )
-                    else:
-                        st.markdown(
-                            "**Benvenuta in salone! 💅 Inserisci i dati del tuo account per confermare l'arrivo:**"
-                        )
-                        with st.form("form_checkin_cliente_automatico"):
-                            chk_nome = st.text_input("Nome *")
-                            chk_cognome = st.text_input("Cognome *")
-                            chk_password = st.text_input("Password dell'account *", type="password")
-                            submit_checkin = st.form_submit_button(
-                                "✅ Conferma la mia Presenza"
-                            )
-
-                            if submit_checkin:
-                                chk_nome_clean = chk_nome.strip().title()
-                                chk_cognome_clean = chk_cognome.strip().title()
-
-                                if not chk_nome_clean or not chk_cognome_clean or not chk_password:
-                                    st.error("Per favore, compila tutti i campi.")
-                                else:
-                                    utente_verificato, msg_err = login_utente(
-                                        chk_nome_clean, chk_cognome_clean, chk_password
-                                    )
-
-                                    if not utente_verificato:
-                                        st.error(f"❌ Credenziali non valide: {msg_err}")
-                                    else:
-                                        cf_utente = utente_verificato["codice_fiscale"]
-
-                                        with engine.begin() as conn:
-                                            appuntamenti_trovati = conn.execute(
-                                                text("""
-                                                    SELECT id, nome, trattamento, ora, stato_presenza 
-                                                    FROM prenotazioni 
-                                                    WHERE data = :data 
-                                                      AND device_id != 'SYSTEM' 
-                                                      AND (UPPER(codice_fiscale) = :cf OR UPPER(codice_fiscale_2) = :cf)
-                                                """),
-                                                {"data": oggi_str, "cf": cf_utente}
-                                            ).fetchall()
-
-                                        if not appuntamenti_trovati:
-                                            st.error("❌ Nessuna prenotazione trovata a tuo nome per oggi.")
-                                        else:
-                                            appuntamento_valido = None
-                                            for (
-                                                p_id, p_nome, p_tratt, p_ora, p_stato,
-                                            ) in appuntamenti_trovati:
-                                                ora_app = datetime.strptime(
-                                                    p_ora, "%H:%M"
-                                                ).time()
-                                                dt_app = datetime.combine(
-                                                    datetime.today(), ora_app
-                                                )
-
-                                                inizio_finestra = (
-                                                    dt_app - timedelta(minutes=45)
-                                                ).time()
-                                                fine_finestra = (
-                                                    dt_app + timedelta(minutes=30)
-                                                ).time()
-
-                                                if (
-                                                    inizio_finestra
-                                                    <= current_time
-                                                    <= fine_finestra
-                                                ):
-                                                    appuntamento_valido = (
-                                                        p_id, p_nome, p_tratt, p_ora
-                                                    )
-                                                    break
-
-                                            if appuntamento_valido:
-                                                p_id, p_nome, p_tratt, p_ora = (
-                                                    appuntamento_valido
-                                                )
-
-                                                with engine.begin() as conn:
-                                                    conn.execute(
-                                                        text("UPDATE prenotazioni SET stato_presenza = 'Presente' WHERE id = :pid"),
-                                                        {"pid": p_id}
-                                                    )
-
-                                                st.session_state["checkin_successo"] = (
-                                                    p_id, p_nome, p_tratt, p_ora, oggi_str,
-                                                )
-                                                st.rerun()
-                                            else:
-                                                st.error(
-                                                    "⏳ Il check-in è consentito solo nell'orario prossimo al tuo appuntamento."
-                                                )
-
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("🏠 Torna alla Home principale"):
-                if "checkin_successo" in st.session_state:
-                    del st.session_state["checkin_successo"]
-                st.query_params.clear()
-                st.rerun()
-
-            st.stop()
-
         # --- GATE DI ACCESSO: Login / Registrazione Account Cliente ---
         if "utente_loggato" not in st.session_state:
             if logo_path:
@@ -1309,6 +916,11 @@ else:
                             )
                             if successo:
                                 st.success(msg)
+                                # --- AUTO-LOGIN POST REGISTRAZIONE ---
+                                utente_creato, err_login = login_utente(reg_nome, reg_cognome, reg_password)
+                                if utente_creato:
+                                    st.session_state["utente_loggato"] = utente_creato
+                                    st.rerun()
                             else:
                                 st.error(f"❌ {msg}")
 
@@ -1345,7 +957,7 @@ else:
             data_creazione_str = get_current_time_local().strftime("%Y-%m-%d %H:%M")
             with engine.begin() as conn:
                 conn.execute(
-                    text("INSERT INTO prenotazioni (nome, data, ora, trattamento, data_creazione, device_id, stato_presenza, codice_fiscale, codice_fiscale_2) VALUES (:n, :d, :o, :t, :dc, :di, :sp, :cf1, :cf2)"),
+                    text("INSERT INTO prenotazioni (nome, data, ora, trattamento, data_creazione, device_id, codice_fiscale, codice_fiscale_2) VALUES (:n, :d, :o, :t, :dc, :di, :cf1, :cf2)"),
                     {
                         "n": pb["nome_completo"],
                         "d": str(pb["data_scelta"]),
@@ -1353,7 +965,6 @@ else:
                         "t": pb["trattamento"],
                         "dc": data_creazione_str,
                         "di": pb["client_device_id"],
-                        "sp": "Assente",
                         "cf1": pb["cf_principale"],
                         "cf2": pb["cf_secondario"],
                     }
@@ -1376,16 +987,7 @@ else:
         with tab1:
             st.markdown("### Modulo di Prenotazione")
 
-            if st.session_state.get("reset_form_flag", False):
-                if "nome_2_input" in st.session_state:
-                    st.session_state["nome_2_input"] = ""
-                if "cognome_2_input" in st.session_state:
-                    st.session_state["cognome_2_input"] = ""
-                if "cf_2_input" in st.session_state:
-                    st.session_state["cf_2_input"] = ""
-                st.session_state["reset_form_flag"] = False
-
-            if "booking_success_msg" in st.session_state:
+            if st.session_state.get("booking_success_msg", ""):
                 st.success(st.session_state["booking_success_msg"])
                 
                 if "ics_data" in st.session_state:
@@ -1436,33 +1038,55 @@ else:
                         f"(CF: {codice_fiscale})"
                     )
 
+                    # --- NUOVA LISTA TRATTAMENTI RICHIESTA[cite: 4] ---
                     trattamento = st.selectbox(
                         "Seleziona Trattamento Estetico *",
                         [
-                            "Manicure Semipermanente",
-                            "Pedicure Estetico",
-                            "Pulizia Viso Profonda",
-                            "Laminazione Ciglia e Sopracciglia",
-                            "Trattamento Viso Anti-age",
-                            "Massaggio Corpo Relax",
-                            "Trattamento di Coppia",
+                            # UNGHIE[cite: 4]
+                            "Unghie: Mani[cite: 4]",
+                            "Unghie: Piedi[cite: 4]",
+                            "Unghie: Semipermanente o gel[cite: 4]",
+                            "Unghie: Refil[cite: 4]",
+                            "Unghie: Ricostruzione[cite: 4]",
+                            # CIGLIA[cite: 4]
+                            "Ciglia: Montaggio[cite: 4]",
+                            "Ciglia: Smontaggio[cite: 4]",
+                            "Ciglia: Refil[cite: 4]",
+                            # CAPELLI[cite: 4]
+                            "Capelli: Taglio[cite: 4]",
+                            "Capelli: Colore[cite: 4]",
+                            "Capelli: Piega[cite: 4]",
+                            "Capelli: Taglio+piega[cite: 4]",
+                            "Capelli: Taglio+colore+piega[cite: 4]",
+                            "Capelli: Colore+piega[cite: 4]",
+                            "Capelli: Acconciatura[cite: 4]",
+                            "Capelli: Meches[cite: 4]",
+                            "Capelli: Balajage[cite: 4]",
+                            "Capelli: Permanente[cite: 4]",
+                            # MASSAGGIO[cite: 4]
+                            "Massaggio: Relax[cite: 4]",
+                            "Massaggio: Anticellulite[cite: 4]",
+                            "Massaggio: Scrub[cite: 4]",
+                            # SOPRACCIGLIA[cite: 4]
+                            "Sopracciglia: Pinzetta[cite: 4]",
+                            # CERETTA[cite: 4]
+                            "Ceretta: Gambe intere[cite: 4]",
+                            "Ceretta: Metà gambe[cite: 4]",
+                            "Ceretta: Addome[cite: 4]",
+                            "Ceretta: Petto[cite: 4]",
+                            "Ceretta: Inguine[cite: 4]",
+                            "Ceretta: Baffetti[cite: 4]",
+                            "Ceretta: Braccia[cite: 4]",
+                            "Ceretta: Ascelle[cite: 4]",
+                            "Ceretta: Schiena[cite: 4]",
+                            "Ceretta: Total body[cite: 4]",
+                            # VISO[cite: 4]
+                            "Viso: Pulizia viso[cite: 4]",
+                            "Viso: Massaggio antirughe[cite: 4]",
+                            "Viso: Trattamento viso con spatola ultrasuoni[cite: 4]"
                         ],
                         key="trattamento_input",
                     )
-
-                    nome_2 = ""
-                    cognome_2 = ""
-                    codice_fiscale_2 = ""
-                    if trattamento == "Trattamento di Coppia":
-                        st.markdown("---")
-                        st.markdown("##### 👥 Dati Seconda Persona (Coppia)")
-                        col_n4, col_n5, col_n6 = st.columns([2, 2, 3])
-                        with col_n4:
-                            nome_2 = st.text_input("Nome Seconda Persona *", key="nome_2_input")
-                        with col_n5:
-                            cognome_2 = st.text_input("Cognome Seconda Persona *", key="cognome_2_input")
-                        with col_n6:
-                            codice_fiscale_2 = st.text_input("Codice Fiscale 2ª Persona *", key="cf_2_input")
 
                     col1, col2 = st.columns(2)
 
@@ -1483,7 +1107,6 @@ else:
                     current_time = current_datetime.time()
 
                     cf_curr = codice_fiscale.strip().upper() if codice_fiscale else ""
-                    cf_curr_2 = codice_fiscale_2.strip().upper() if codice_fiscale_2 else ""
 
                     orari_disponibili = []
                     for h in TUTTI_GLI_ORARI:
@@ -1502,25 +1125,16 @@ else:
                                 
                                 if p_dev == client_device_id:
                                     utente_gia_prenotato = True
-                                if cf_curr and (p_cf1 == cf_curr or p_cf2 == cf_curr or p_cf1 == cf_curr_2 or p_cf2 == cf_curr_2):
-                                    utente_gia_prenotato = True
-                                if cf_curr_2 and (p_cf1 == cf_curr_2 or p_cf2 == cf_curr_2):
+                                if cf_curr and (p_cf1 == cf_curr or p_cf2 == cf_curr):
                                     utente_gia_prenotato = True
 
-                                if p_trattamento == "Trattamento di Coppia":
-                                    posti_occupati += 2
-                                else:
-                                    posti_occupati += 1
+                                posti_occupati += 1
 
                         if slot_bloccato or utente_gia_prenotato:
                             continue
 
-                        if trattamento == "Trattamento di Coppia":
-                            if posti_occupati > 0:
-                                continue
-                        else:
-                            if posti_occupati >= 2:
-                                continue
+                        if posti_occupati >= 2:
+                            continue
 
                         if data_scelta == current_date:
                             slot_time = datetime.strptime(h, "%H:%M").time()
@@ -1549,11 +1163,6 @@ else:
                     nome = nome.strip().title()
                     cognome = cognome.strip().title()
                     codice_fiscale = codice_fiscale.strip().upper()
-                    
-                    if trattamento == "Trattamento di Coppia":
-                        nome_2 = nome_2.strip().title()
-                        cognome_2 = cognome_2.strip().title()
-                        codice_fiscale_2 = codice_fiscale_2.strip().upper()
 
                     with engine.begin() as conn_check:
                         is_banned_now = conn_check.execute(
@@ -1562,25 +1171,16 @@ else:
                         ).fetchone()
 
                     cf_valido, cf_msg = valida_codice_fiscale(nome, cognome, codice_fiscale)
-                    
-                    cf_2_valido = True
-                    cf_2_msg = ""
-                    if trattamento == "Trattamento di Coppia":
-                        cf_2_valido, cf_2_msg = valida_codice_fiscale(nome_2, cognome_2, codice_fiscale_2)
-
                     cf_principale = codice_fiscale.strip().upper()
-                    cf_secondario = codice_fiscale_2.strip().upper() if trattamento == "Trattamento di Coppia" else None
 
                     with engine.begin() as conn_dupl:
                         gia_presente = conn_dupl.execute(
                             text("""SELECT id FROM prenotazioni 
                                    WHERE data = :d AND ora = :o 
-                                     AND (device_id = :di OR UPPER(codice_fiscale) = :cfp OR UPPER(codice_fiscale_2) = :cfp 
-                                          OR (:cfs IS NOT NULL AND (UPPER(codice_fiscale) = :cfs OR UPPER(codice_fiscale_2) = :cfs)))"""),
+                                     AND (device_id = :di OR UPPER(codice_fiscale) = :cfp OR UPPER(codice_fiscale_2) = :cfp)"""),
                             {
                                 "d": str(data_scelta), "o": ora_scelta, 
-                                "di": client_device_id, "cfp": cf_principale,
-                                "cfs": cf_secondario
+                                "di": client_device_id, "cfp": cf_principale
                             }
                         ).fetchone()
 
@@ -1590,19 +1190,12 @@ else:
                         st.error("Per favore inserisci nome, cognome e codice fiscale.")
                     elif not cf_valido:
                         st.error(f"❌ **Codice Fiscale non valido per {nome} {cognome}:** {cf_msg}")
-                    elif trattamento == "Trattamento di Coppia" and (not nome_2.strip() or not cognome_2.strip() or not codice_fiscale_2.strip()):
-                        st.error("Per favore inserisci tutti i dati anche per la seconda persona.")
-                    elif trattamento == "Trattamento di Coppia" and not cf_2_valido:
-                        st.error(f"❌ **Codice Fiscale non valido per la seconda persona ({nome_2} {cognome_2}):** {cf_2_msg}")
                     elif gia_presente:
-                        st.error("⚠️ Hai già una prenotazione attiva in questo giorno e orario (oppure una delle partecipanti risulta già registrata nello stesso slot).")
+                        st.error("⚠️ Hai già una prenotazione attiva in questo giorno e orario.")
                     elif not ora_scelta or "Tutto occupato" in ora_scelta or "Già prenotato" in ora_scelta:
                         st.error("Spiacenti, non ci sono orari disponibili per la data selezionata.")
                     else:
-                        if trattamento == "Trattamento di Coppia":
-                            nome_completo = f"{nome.strip()} {cognome.strip()} & {nome_2.strip()} {cognome_2.strip()}"
-                        else:
-                            nome_completo = f"{nome.strip()} {cognome.strip()}"
+                        nome_completo = f"{nome.strip()} {cognome.strip()}"
 
                         with engine.begin() as conn:
                             esistenti = conn.execute(
@@ -1619,20 +1212,10 @@ else:
                             ):
                                 slot_occupato = True
                                 break
-                            elif p_trattamento == "Trattamento di Coppia":
-                                posti_occupati += 2
                             else:
                                 posti_occupati += 1
 
-                        impossibile_prenotare = False
-                        if slot_occupato:
-                            impossibile_prenotare = True
-                        elif trattamento == "Trattamento di Coppia" and posti_occupati > 0:
-                            impossibile_prenotare = True
-                        elif trattamento != "Trattamento di Coppia" and posti_occupati >= 2:
-                            impossibile_prenotare = True
-
-                        if impossibile_prenotare:
+                        if slot_occupato or posti_occupati >= 2:
                             st.error("⚠️ Spiacenti, questo orario è stato appena occupato! Riprova con un altro orario.")
                         else:
                             st.session_state["pending_booking"] = {
@@ -1642,7 +1225,7 @@ else:
                                 "trattamento": trattamento,
                                 "client_device_id": client_device_id,
                                 "cf_principale": cf_principale,
-                                "cf_secondario": cf_secondario,
+                                "cf_secondario": None,
                                 "nome": nome,
                                 "cognome": cognome
                             }
