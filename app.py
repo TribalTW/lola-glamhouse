@@ -207,7 +207,7 @@ st.markdown(
         font-family: 'Playfair Display', serif !important;
         font-weight: 700 !important;
         font-size: 1.8rem !important;   /* Modifica qui la dimensione desiderata */
-        color: #7b1fa2 !important;      /* Modifica qui il colore desiderato */
+        color: #FFFFFF !important;      /* Modifica qui il colore desiderato */
     }
 
     /* Lascia inalterati h2 e h3 della sidebar se necessario */
