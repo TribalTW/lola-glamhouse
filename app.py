@@ -139,7 +139,7 @@ st.markdown(
     /* Importazione dei font Great Vibes e Playfair Display da Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
-    /* Sfondo personalizzato con l'immagine background.png da GitHub[cite: 2] */
+    /* Sfondo personalizzato con l'immagine background.png da GitHub */
     .stApp {
         background-image: url("https://github.com/TribalTW/lola-glamhouse/blob/main/background.png?raw=true");
         background-size: cover;
@@ -1271,26 +1271,28 @@ else:
                 with c2:
                     st.image(logo_path, use_container_width=True)
 
-            # Titolo principale e sottotitolo (Area Blu)
-            st.title("Lola's Glam House")
-            st.markdown(
-                """
-                <p style="text-align: center; font-size: 1.25rem; color: #4a148c; font-weight: 600; margin-top: -10px; margin-bottom: 20px;">
-                    Estetica & Benessere
-                </p>
-                """,
-                unsafe_allow_html=True,
-            )
+            # Container con rettangolo (bordo) che racchiude titolo, sottotitolo e riquadro informativo
+            with st.container(border=True):
+                # Titolo principale e sottotitolo (Area Blu)
+                st.title("Lola's Glam House")
+                st.markdown(
+                    """
+                    <p style="text-align: center; font-size: 1.25rem; color: #4a148c; font-weight: 600; margin-top: -10px; margin-bottom: 20px;">
+                        Estetica & Benessere
+                    </p>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
-            # Riquadro informativo (Area Arancione)
-            st.markdown(
-                """
-                <div class="box-info-carino">
-                    ✨ Accedi o Registrati per poter prenotare il tuo prossimo trattamento con pochi semplici click.
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+                # Riquadro informativo (Area Arancione)
+                st.markdown(
+                    """
+                    <div class="box-info-carino">
+                        ✨ Accedi o Registrati per poter prenotare il tuo prossimo trattamento con pochi semplici click.
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
             tab_login, tab_registrazione = st.tabs(["🔑 Accedi", "📝 Registrati"])
 
