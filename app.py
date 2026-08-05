@@ -1498,20 +1498,20 @@ else:
                         key="categoria_input",
                     )
 
-                    # Selezione Trattamento Specifico in base alla categoria
-                    lista_trattamenti_disponibili = TRATTAMENTI_CONFIG[categoria_scelta]
-                    trattamento_specifico = st.selectbox(
-                        "Seleziona Trattamento Specifico *",
-                        lista_trattamenti_disponibili,
-                        key="trattamento_specifico_input",
-                    )
+                    # Selezione Trattamenti Specifici multipli con Checkbox (quadrati)
+                    st.markdown(f"**Seleziona uno o più trattamenti specifici per {categoria_scelta} *:**")
+                    trattamenti_selezionati = []
+                    for t_spec in TRATTAMENTI_CONFIG[categoria_scelta]:
+                        if st.checkbox(t_spec, key=f"chk_{categoria_scelta}_{t_spec}"):
+                            trattamenti_selezionati.append(t_spec)
 
-                    trattamento = f"{categoria_scelta} - {trattamento_specifico}"
+                    trattamento = f"{categoria_scelta} - {', '.join(trattamenti_selezionati)}" if trattamenti_selezionati else ""
+                    is_coppia = "Trattamento di Coppia" in trattamenti_selezionati
 
                     nome_2 = ""
                     cognome_2 = ""
                     codice_fiscale_2 = ""
-                    if trattamento_specifico == "Trattamento di Coppia":
+                    if is_coppia:
                         st.markdown("---")
                         st.markdown("##### 👥 Dati Seconda Persona (Coppia)")
                         col_n4, col_n5, col_n6 = st.columns([2, 2, 3])
@@ -1573,7 +1573,7 @@ else:
                         if slot_bloccato or utente_gia_prenotato:
                             continue
 
-                        if trattamento_specifico == "Trattamento di Coppia":
+                        if is_coppia:
                             if posti_occupati > 0:
                                 continue
                         else:
@@ -1608,7 +1608,7 @@ else:
                     cognome = cognome.strip().title()
                     codice_fiscale = codice_fiscale.strip().upper()
                     
-                    if trattamento_specifico == "Trattamento di Coppia":
+                    if is_coppia:
                         nome_2 = nome_2.strip().title()
                         cognome_2 = cognome_2.strip().title()
                         codice_fiscale_2 = codice_fiscale_2.strip().upper()
@@ -1623,11 +1623,11 @@ else:
                     
                     cf_2_valido = True
                     cf_2_msg = ""
-                    if trattamento_specifico == "Trattamento di Coppia":
+                    if is_coppia:
                         cf_2_valido, cf_2_msg = valida_codice_fiscale(nome_2, cognome_2, codice_fiscale_2)
 
                     cf_principale = codice_fiscale.strip().upper()
-                    cf_secondario = codice_fiscale_2.strip().upper() if trattamento_specifico == "Trattamento di Coppia" else None
+                    cf_secondario = codice_fiscale_2.strip().upper() if is_coppia else None
 
                     with engine.begin() as conn_dupl:
                         gia_presente = conn_dupl.execute(
@@ -1648,16 +1648,18 @@ else:
                         st.error("Per favore inserisci nome, cognome e codice fiscale.")
                     elif not cf_valido:
                         st.error(f"❌ **Codice Fiscale non valido per {nome} {cognome}:** {cf_msg}")
-                    elif trattamento_specifico == "Trattamento di Coppia" and (not nome_2.strip() or not cognome_2.strip() or not codice_fiscale_2.strip()):
+                    elif not trattamenti_selezionati:
+                        st.error("⚠️ Per favore, seleziona almeno un trattamento specifico.")
+                    elif is_coppia and (not nome_2.strip() or not cognome_2.strip() or not codice_fiscale_2.strip()):
                         st.error("Per favore inserisci tutti i dati anche per la seconda persona.")
-                    elif trattamento_specifico == "Trattamento di Coppia" and not cf_2_valido:
+                    elif is_coppia and not cf_2_valido:
                         st.error(f"❌ **Codice Fiscale non valido per la seconda persona ({nome_2} {cognome_2}):** {cf_2_msg}")
                     elif gia_presente:
                         st.error("⚠️ Hai già una prenotazione attiva in questo giorno e orario (oppure una delle partecipanti risulta già registrata nello stesso slot).")
                     elif not ora_scelta or "Tutto occupato" in ora_scelta or "Già prenotato" in ora_scelta:
                         st.error("Spiacenti, non ci sono orari disponibili per la data selezionata.")
                     else:
-                        if trattamento_specifico == "Trattamento di Coppia":
+                        if is_coppia:
                             nome_completo = f"{nome.strip()} {cognome.strip()} & {nome_2.strip()} {cognome_2.strip()}"
                         else:
                             nome_completo = f"{nome.strip()} {cognome.strip()}"
@@ -1685,9 +1687,9 @@ else:
                         impossibile_prenotare = False
                         if slot_occupato:
                             impossibile_prenotare = True
-                        elif trattamento_specifico == "Trattamento di Coppia" and posti_occupati > 0:
+                        elif is_coppia and posti_occupati > 0:
                             impossibile_prenotare = True
-                        elif trattamento_specifico != "Trattamento di Coppia" and posti_occupati >= 2:
+                        elif not is_coppia and posti_occupati >= 2:
                             impossibile_prenotare = True
 
                         if impossibile_prenotare:
