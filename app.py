@@ -76,59 +76,6 @@ def init_db():
 
 init_db()
 
-# Dizionario Categorie e Trattamenti Estetici
-CATEGORIE_TRATTAMENTI = {
-    "UNGHIE": [
-        "Mani",
-        "Piedi",
-        "Semipermanente o gel",
-        "Refil",
-        "Ricostruzione"
-    ],
-    "CIGLIA": [
-        "Montaggio",
-        "Smontaggio",
-        "Refil"
-    ],
-    "CAPELLI": [
-        "Taglio",
-        "Colore",
-        "Piega",
-        "Taglio+piega",
-        "Taglio+colore+piega",
-        "Colore+piega",
-        "Acconciatura",
-        "Meches",
-        "Balajage",
-        "Permanente"
-    ],
-    "MASSAGGIO": [
-        "Relax",
-        "Anticellulite",
-        "Scrub"
-    ],
-    "SOPRACCIGLIA": [
-        "Pinzetta"
-    ],
-    "CERETTA": [
-        "Gambe intere",
-        "Metà gambe",
-        "Addome",
-        "Petto",
-        "Inguine",
-        "Baffetti",
-        "Braccia",
-        "Ascelle",
-        "Schiena",
-        "Total body"
-    ],
-    "VISO": [
-        "Pulizia viso",
-        "Massaggio antirughe",
-        "Trattamento viso con spatola ultrasuoni"
-    ]
-}
-
 # Stile CSS professionale con Great Vibes (h1 principale) e Playfair Display (sidebar admin)
 st.markdown(
     """
@@ -255,15 +202,8 @@ st.markdown(
         text-align: center;
     }
     
-    /* Modifica dimensione e colore per "Area Riservata (Admin)" */
-    [data-testid="stSidebar"] h1 {
-        font-family: 'Playfair Display', serif !important;
-        font-weight: 700 !important;
-        font-size: 1.6rem !important;
-        color: #FFFFFF !important;
-    }
-
-    [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+    /* Applicazione del font Playfair Display ai titoli presenti nella barra laterale (Admin) */
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
         font-family: 'Playfair Display', serif !important;
         font-weight: 700 !important;
         letter-spacing: 0px !important;
@@ -577,7 +517,7 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
 SUMMARY:{titolo_evento}
-DESCRIPTION:Appuntamento presso Lola's Glam House.\nTi ricordiamo di arrivare puntuale per il tuo trattamento.
+DESCRIPTION:Appuntamento presso Lola's Glam House.\\nTi ricordiamo di arrivare puntuale per il tuo trattamento.
 LOCATION:Lola's Glam House
 DTSTART:{dt_inizio.strftime(fmt)}
 DTEND:{dt_fine.strftime(fmt)}
@@ -1407,7 +1347,7 @@ else:
                         "di": pb["client_device_id"],
                         "sp": "Assente",
                         "cf1": pb["cf_principale"],
-                        "cf2": None,
+                        "cf2": pb["cf_secondario"],
                     }
                 )
 
@@ -1415,9 +1355,7 @@ else:
             data_formattata = pb["data_scelta"].strftime("%d/%m/%Y")
             
             st.session_state["booking_success_msg"] = (
-                f"🎉 PRENOTAZIONE CONFERMATA!
-
-Grazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore {pb['ora_scelta']} per il trattamento: {pb['trattamento']}."
+                f"🎉 PRENOTAZIONE CONFERMATA!\n\nGrazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore {pb['ora_scelta']} per il trattamento: {pb['trattamento']}."
             )
             st.session_state["ics_data"] = ics_string
             st.session_state["reset_form_flag"] = True
@@ -1431,6 +1369,12 @@ Grazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore
             st.markdown("### Modulo di Prenotazione")
 
             if st.session_state.get("reset_form_flag", False):
+                if "nome_2_input" in st.session_state:
+                    st.session_state["nome_2_input"] = ""
+                if "cognome_2_input" in st.session_state:
+                    st.session_state["cognome_2_input"] = ""
+                if "cf_2_input" in st.session_state:
+                    st.session_state["cf_2_input"] = ""
                 st.session_state["reset_form_flag"] = False
 
             if "booking_success_msg" in st.session_state:
@@ -1484,23 +1428,33 @@ Grazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore
                         f"(CF: {codice_fiscale})"
                     )
 
-                    st.markdown("##### 💅 Selezione Categoria & Trattamento")
-                    col_cat1, col_cat2 = st.columns(2)
-                    with col_cat1:
-                        categoria_scelta = st.selectbox(
-                            "Seleziona Categoria *",
-                            list(CATEGORIE_TRATTAMENTI.keys()),
-                            key="categoria_input",
-                        )
-                    with col_cat2:
-                        trattamenti_disponibili = CATEGORIE_TRATTAMENTI[categoria_scelta]
-                        trattamento_specifico = st.selectbox(
-                            "Seleziona Trattamento *",
-                            trattamenti_disponibili,
-                            key="trattamento_specifico_input",
-                        )
+                    trattamento = st.selectbox(
+                        "Seleziona Trattamento Estetico *",
+                        [
+                            "Manicure Semipermanente",
+                            "Pedicure Estetico",
+                            "Pulizia Viso Profonda",
+                            "Laminazione Ciglia e Sopracciglia",
+                            "Trattamento Viso Anti-age",
+                            "Massaggio Corpo Relax",
+                            "Trattamento di Coppia",
+                        ],
+                        key="trattamento_input",
+                    )
 
-                    trattamento = f"{categoria_scelta} - {trattamento_specifico}"
+                    nome_2 = ""
+                    cognome_2 = ""
+                    codice_fiscale_2 = ""
+                    if trattamento == "Trattamento di Coppia":
+                        st.markdown("---")
+                        st.markdown("##### 👥 Dati Seconda Persona (Coppia)")
+                        col_n4, col_n5, col_n6 = st.columns([2, 2, 3])
+                        with col_n4:
+                            nome_2 = st.text_input("Nome Seconda Persona *", key="nome_2_input")
+                        with col_n5:
+                            cognome_2 = st.text_input("Cognome Seconda Persona *", key="cognome_2_input")
+                        with col_n6:
+                            codice_fiscale_2 = st.text_input("Codice Fiscale 2ª Persona *", key="cf_2_input")
 
                     col1, col2 = st.columns(2)
 
@@ -1521,6 +1475,7 @@ Grazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore
                     current_time = current_datetime.time()
 
                     cf_curr = codice_fiscale.strip().upper() if codice_fiscale else ""
+                    cf_curr_2 = codice_fiscale_2.strip().upper() if codice_fiscale_2 else ""
 
                     orari_disponibili = []
                     for h in TUTTI_GLI_ORARI:
@@ -1539,16 +1494,25 @@ Grazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore
                                 
                                 if p_dev == client_device_id:
                                     utente_gia_prenotato = True
-                                if cf_curr and (p_cf1 == cf_curr or p_cf2 == cf_curr):
+                                if cf_curr and (p_cf1 == cf_curr or p_cf2 == cf_curr or p_cf1 == cf_curr_2 or p_cf2 == cf_curr_2):
+                                    utente_gia_prenotato = True
+                                if cf_curr_2 and (p_cf1 == cf_curr_2 or p_cf2 == cf_curr_2):
                                     utente_gia_prenotato = True
 
-                                posti_occupati += 1
+                                if p_trattamento == "Trattamento di Coppia":
+                                    posti_occupati += 2
+                                else:
+                                    posti_occupati += 1
 
                         if slot_bloccato or utente_gia_prenotato:
                             continue
 
-                        if posti_occupati >= 2:
-                            continue
+                        if trattamento == "Trattamento di Coppia":
+                            if posti_occupati > 0:
+                                continue
+                        else:
+                            if posti_occupati >= 2:
+                                continue
 
                         if data_scelta == current_date:
                             slot_time = datetime.strptime(h, "%H:%M").time()
@@ -1577,6 +1541,11 @@ Grazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore
                     nome = nome.strip().title()
                     cognome = cognome.strip().title()
                     codice_fiscale = codice_fiscale.strip().upper()
+                    
+                    if trattamento == "Trattamento di Coppia":
+                        nome_2 = nome_2.strip().title()
+                        cognome_2 = cognome_2.strip().title()
+                        codice_fiscale_2 = codice_fiscale_2.strip().upper()
 
                     with engine.begin() as conn_check:
                         is_banned_now = conn_check.execute(
@@ -1585,16 +1554,25 @@ Grazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore
                         ).fetchone()
 
                     cf_valido, cf_msg = valida_codice_fiscale(nome, cognome, codice_fiscale)
+                    
+                    cf_2_valido = True
+                    cf_2_msg = ""
+                    if trattamento == "Trattamento di Coppia":
+                        cf_2_valido, cf_2_msg = valida_codice_fiscale(nome_2, cognome_2, codice_fiscale_2)
+
                     cf_principale = codice_fiscale.strip().upper()
+                    cf_secondario = codice_fiscale_2.strip().upper() if trattamento == "Trattamento di Coppia" else None
 
                     with engine.begin() as conn_dupl:
                         gia_presente = conn_dupl.execute(
                             text("""SELECT id FROM prenotazioni 
                                    WHERE data = :d AND ora = :o 
-                                     AND (device_id = :di OR UPPER(codice_fiscale) = :cfp OR UPPER(codice_fiscale_2) = :cfp)"""),
+                                     AND (device_id = :di OR UPPER(codice_fiscale) = :cfp OR UPPER(codice_fiscale_2) = :cfp 
+                                          OR (:cfs IS NOT NULL AND (UPPER(codice_fiscale) = :cfs OR UPPER(codice_fiscale_2) = :cfs)))"""),
                             {
                                 "d": str(data_scelta), "o": ora_scelta, 
-                                "di": client_device_id, "cfp": cf_principale
+                                "di": client_device_id, "cfp": cf_principale,
+                                "cfs": cf_secondario
                             }
                         ).fetchone()
 
@@ -1604,12 +1582,19 @@ Grazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore
                         st.error("Per favore inserisci nome, cognome e codice fiscale.")
                     elif not cf_valido:
                         st.error(f"❌ **Codice Fiscale non valido per {nome} {cognome}:** {cf_msg}")
+                    elif trattamento == "Trattamento di Coppia" and (not nome_2.strip() or not cognome_2.strip() or not codice_fiscale_2.strip()):
+                        st.error("Per favore inserisci tutti i dati anche per la seconda persona.")
+                    elif trattamento == "Trattamento di Coppia" and not cf_2_valido:
+                        st.error(f"❌ **Codice Fiscale non valido per la seconda persona ({nome_2} {cognome_2}):** {cf_2_msg}")
                     elif gia_presente:
-                        st.error("⚠️ Hai già una prenotazione attiva in questo giorno e orario.")
+                        st.error("⚠️ Hai già una prenotazione attiva in questo giorno e orario (oppure una delle partecipanti risulta già registrata nello stesso slot).")
                     elif not ora_scelta or "Tutto occupato" in ora_scelta or "Già prenotato" in ora_scelta:
                         st.error("Spiacenti, non ci sono orari disponibili per la data selezionata.")
                     else:
-                        nome_completo = f"{nome.strip()} {cognome.strip()}"
+                        if trattamento == "Trattamento di Coppia":
+                            nome_completo = f"{nome.strip()} {cognome.strip()} & {nome_2.strip()} {cognome_2.strip()}"
+                        else:
+                            nome_completo = f"{nome.strip()} {cognome.strip()}"
 
                         with engine.begin() as conn:
                             esistenti = conn.execute(
@@ -1626,10 +1611,20 @@ Grazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore
                             ):
                                 slot_occupato = True
                                 break
+                            elif p_trattamento == "Trattamento di Coppia":
+                                posti_occupati += 2
                             else:
                                 posti_occupati += 1
 
-                        if slot_occupato or posti_occupati >= 2:
+                        impossibile_prenotare = False
+                        if slot_occupato:
+                            impossibile_prenotare = True
+                        elif trattamento == "Trattamento di Coppia" and posti_occupati > 0:
+                            impossibile_prenotare = True
+                        elif trattamento != "Trattamento di Coppia" and posti_occupati >= 2:
+                            impossibile_prenotare = True
+
+                        if impossibile_prenotare:
                             st.error("⚠️ Spiacenti, questo orario è stato appena occupato! Riprova con un altro orario.")
                         else:
                             st.session_state["pending_booking"] = {
@@ -1639,6 +1634,7 @@ Grazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore
                                 "trattamento": trattamento,
                                 "client_device_id": client_device_id,
                                 "cf_principale": cf_principale,
+                                "cf_secondario": cf_secondario,
                                 "nome": nome,
                                 "cognome": cognome
                             }
@@ -1697,5 +1693,3 @@ Grazie {pb['nome']} {pb['cognome']}, ti aspettiamo il {data_formattata} alle ore
             if st.button("🚪 Esci", key="btn_logout_footer"):
                 del st.session_state["utente_loggato"]
                 st.rerun()
-app.py
-Visualizzazione di app.py.
