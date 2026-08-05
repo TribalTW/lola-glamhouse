@@ -1271,16 +1271,17 @@ else:
                 with c2:
                     st.image(logo_path, use_container_width=True)
 
+            st.title("Lola's Glam House")
+            st.write("**Estetica & Benessere**")
+            st.markdown("#### 👤 Accedi al tuo account o registrati")
             st.markdown(
                 """
-                <div class="box-info-carino" style="text-align: center;">
-                    <h1 style="font-family: 'Great Vibes', cursive !important; color: #4a148c !important; font-size: 3.8rem !important; margin: 0 0 5px 0 !important; font-weight: 400 !important; line-height: 1.1 !important;">Lola's Glam House</h1>
-                    <p style="color: #4a148c !important; font-size: 1.05rem !important; margin: 0 !important; text-align: center !important;"><strong>Estetica & Benessere</strong></p>
+                <div class="box-info-carino">
+                    ✨ Accedi o Registrati per poter prenotare il tuo prossimo trattamento con pochi semplici click.
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
-            st.markdown("#### 👤 Accedi al tuo account o registrati")
 
             tab_login, tab_registrazione = st.tabs(["🔑 Accedi", "📝 Registrati"])
 
@@ -1377,14 +1378,13 @@ else:
             with c2:
                 st.image(logo_path, use_container_width=True)
 
+        st.title("Lola's Glam House")
         st.markdown(
             f"""
-            <div class="box-info-carino" style="text-align: center;">
-                <h1 style="font-family: 'Great Vibes', cursive !important; color: #4a148c !important; font-size: 3.8rem !important; margin: 0 0 5px 0 !important; font-weight: 400 !important; line-height: 1.1 !important;">Lola's Glam House</h1>
-                <p style="color: #4a148c !important; font-size: 1.05rem !important; margin: 0 !important; text-align: center !important;">
-                    <strong>Estetica & Benessere</strong> &nbsp;|&nbsp; Ciao, {st.session_state['utente_loggato']['nome']} 👋
-                </p>
-            </div>
+            <p style="text-align: center;">
+                <strong>Estetica & Benessere</strong> &nbsp;|&nbsp; Ciao,
+                {st.session_state['utente_loggato']['nome']} 👋
+            </p>
             """,
             unsafe_allow_html=True,
         )
