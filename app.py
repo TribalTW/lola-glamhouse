@@ -141,7 +141,7 @@ st.markdown(
 
     /* Sfondo personalizzato con l'immagine background.png da GitHub[cite: 2] */
     .stApp {
-        background-image: url("https://github.com/TribalTW/lola-glamhouse/blob/main/background.png");
+        background-image: url("https://github.com/TribalTW/lola-glamhouse/blob/main/background.png?raw=true");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
