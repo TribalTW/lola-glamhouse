@@ -202,8 +202,16 @@ st.markdown(
         text-align: center;
     }
     
-    /* Applicazione del font Playfair Display ai titoli presenti nella barra laterale (Admin) */
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+    /* Modifica dimensione e colore per "Area Riservata (Admin)" */
+    [data-testid="stSidebar"] h1 {
+        font-family: 'Playfair Display', serif !important;
+        font-weight: 700 !important;
+        font-size: 1.8rem !important;   /* Modifica qui la dimensione desiderata */
+        color: #7b1fa2 !important;      /* Modifica qui il colore desiderato */
+    }
+
+    /* Lascia inalterati h2 e h3 della sidebar se necessario */
+    [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
         font-family: 'Playfair Display', serif !important;
         font-weight: 700 !important;
         letter-spacing: 0px !important;
