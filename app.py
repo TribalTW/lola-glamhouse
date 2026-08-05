@@ -76,7 +76,7 @@ def init_db():
 
 init_db()
 
-# Stile CSS professionale basato sul colore #f2b3ff, ombreggiature e animazioni coordinate
+# Stile CSS professionale con supporto per il colore #df68f7 sulle tendine (selectboxes) dell'area admin e generali
 st.markdown(
     """
     <style>
@@ -106,12 +106,22 @@ st.markdown(
     }
     
     /* Campi di input moderni */
-    .stTextInput input, .stSelectbox > div > div, .stDateInput input, .stNumberInput input {
+    .stTextInput input, .stDateInput input, .stNumberInput input {
         background-color: #FFFFFF !important;
         border-radius: 10px !important;
         border: 1.5px solid #e0a3ff !important;
         padding: 10px 14px !important;
         transition: all 0.2s ease-in-out !important;
+    }
+
+    /* Tendine (Selectbox) con il colore richiesto #df68f7 */
+    .stSelectbox > div > div {
+        background-color: #FFFFFF !important;
+        border-radius: 10px !important;
+        border: 2px solid #df68f7 !important;
+        padding: 6px 10px !important;
+        transition: all 0.2s ease-in-out !important;
+        box-shadow: 0 2px 8px rgba(223, 104, 247, 0.15) !important;
     }
 
     .stTextInput input:focus, .stSelectbox > div > div:focus, .stDateInput input:focus, .stNumberInput input:focus {
