@@ -132,16 +132,16 @@ TRATTAMENTI_CONFIG = {
     ]
 }
 
-# Stile CSS con sfondo personalizzato da GitHub e font tipografici dedicati
+# Stile CSS con sfondo personalizzato da GitHub e box dedicati
 st.markdown(
     """
     <style>
     /* Importazione dei font Great Vibes e Playfair Display da Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
-    /* Sfondo personalizzato con l'immagine background.png da GitHub[cite: 2] */
+    /* Sfondo personalizzato con l'immagine background.png da GitHub */
     .stApp {
-        background-image: url("https://github.com/TribalTW/lola-glamhouse/blob/main/background.png?raw=true");
+        background-image: url("https://raw.githubusercontent.com/tuo-username/tuo-repository/main/background.png");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -244,7 +244,7 @@ st.markdown(
         white-space: nowrap !important;
     }
     
-    /* Tipografia e Titoli - Applicazione del font Great Vibes al titolo principale (h1) */
+    /* Tipografia e Titoli - Applicazione del font Great Vibes */
     h1 {
         font-family: 'Great Vibes', cursive !important;
         color: #4a148c !important;
@@ -276,7 +276,7 @@ st.markdown(
         letter-spacing: 0px !important;
     }
 
-    /* Box informativo in stile pastello con #f2b3ff */
+    /* Box informativo e Box Titolo in stile pastello con #f2b3ff */
     .box-info-carino {
         background: linear-gradient(135deg, #fcf0ff 0%, #f8e1ff) !important;
         border: 1px solid #f2b3ff !important;
@@ -287,6 +287,30 @@ st.markdown(
         color: #4a148c !important;
         font-size: 0.98rem !important;
         box-shadow: 0 4px 15px rgba(242, 179, 255, 0.2) !important;
+    }
+
+    .box-titolo-salone {
+        background: linear-gradient(135deg, #fcf0ff 0%, #f8e1ff) !important;
+        border: 1.5px solid #f2b3ff !important;
+        border-radius: 20px !important;
+        padding: 22px 24px !important;
+        margin-bottom: 25px !important;
+        text-align: center !important;
+        box-shadow: 0 8px 25px rgba(242, 179, 255, 0.3) !important;
+    }
+    
+    .box-titolo-salone h1 {
+        margin: 0 !important;
+        font-size: 4rem !important;
+    }
+
+    .box-titolo-salone p {
+        margin: 4px 0 0 0 !important;
+        color: #4a148c !important;
+        font-weight: 600 !important;
+        font-size: 1.05rem !important;
+        text-align: center !important;
+        font-family: 'Playfair Display', serif !important;
     }
     
     /* Stile delle Tab di navigazione - Uniforme e a capsula */
@@ -424,7 +448,7 @@ def valida_codice_fiscale(nome, cognome, cf):
     return True, ""
 
 
-# --- Funzioni di supporto per Account Utenti (Registrazione/Login/Recupero) ---
+# --- Funzioni di supporto per Account Utenti ---
 def hash_password(password, salt=None):
     if salt is None:
         salt = secrets.token_hex(16)
@@ -1271,8 +1295,17 @@ else:
                 with c2:
                     st.image(logo_path, use_container_width=True)
 
-            st.title("Lola's Glam House")
-            st.write("**Estetica & Benessere**")
+            # --- TITOLO INSERITO NEL BOX DEDICATO ---
+            st.markdown(
+                """
+                <div class="box-titolo-salone">
+                    <h1>Lola's Glam House</h1>
+                    <p>Estetica & Benessere</p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
             st.markdown("#### 👤 Accedi al tuo account o registrati")
             st.markdown(
                 """
@@ -1378,13 +1411,13 @@ else:
             with c2:
                 st.image(logo_path, use_container_width=True)
 
-        st.title("Lola's Glam House")
+        # --- TITOLO INSERITO NEL BOX DEDICATO (AREA LOGGATA) ---
         st.markdown(
             f"""
-            <p style="text-align: center;">
-                <strong>Estetica & Benessere</strong> &nbsp;|&nbsp; Ciao,
-                {st.session_state['utente_loggato']['nome']} 👋
-            </p>
+            <div class="box-titolo-salone">
+                <h1>Lola's Glam House</h1>
+                <p>Estetica & Benessere &nbsp;|&nbsp; Ciao, {st.session_state['utente_loggato']['nome']} 👋</p>
+            </div>
             """,
             unsafe_allow_html=True,
         )
@@ -1502,7 +1535,7 @@ else:
                         key="categoria_input",
                     )
 
-                    # Selezione Trattamenti Specifici multipli con Checkbox (quadrati)
+                    # Selezione Trattamenti Specifici multipli con Checkbox
                     st.markdown(f"**Seleziona uno o più trattamenti specifici per {categoria_scelta} *:**")
                     trattamenti_selezionati = []
                     for t_spec in TRATTAMENTI_CONFIG[categoria_scelta]:
