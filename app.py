@@ -76,10 +76,13 @@ def init_db():
 
 init_db()
 
-# Stile CSS professionale con supporto per il colore #df68f7 sulle tendine (selectboxes) dell'area admin e generali
+# Stile CSS professionale con supporto per il font Great Vibes sul titolo principale (h1) e #df68f7 sulle selectboxes
 st.markdown(
     """
     <style>
+    /* Importazione del font Great Vibes da Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
     /* Sfondo generale pulito basato su #f2b3ff */
     .stApp {
         background-color: #fdf5ff;
@@ -181,8 +184,18 @@ st.markdown(
         white-space: nowrap !important;
     }
     
-    /* Tipografia e Titoli */
-    h1, h2, h3, h4 {
+    /* Tipografia e Titoli - Applicazione del font Great Vibes al titolo principale (h1) */
+    h1 {
+        font-family: 'Great Vibes', cursive !important;
+        color: #4a148c !important;
+        font-size: 4.2rem !important;
+        font-weight: 400 !important;
+        letter-spacing: 1px !important;
+        text-align: center !important;
+        line-height: 1.1 !important;
+    }
+
+    h2, h3, h4 {
         color: #4a148c !important;
         font-weight: 700 !important;
         letter-spacing: -0.5px;
