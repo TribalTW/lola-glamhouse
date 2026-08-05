@@ -206,7 +206,7 @@ st.markdown(
     [data-testid="stSidebar"] h1 {
         font-family: 'Playfair Display', serif !important;
         font-weight: 700 !important;
-        font-size: 1.8rem !important;   /* Modifica qui la dimensione desiderata */
+        font-size: 1.2rem !important;   /* Modifica qui la dimensione desiderata */
         color: #FFFFFF !important;      /* Modifica qui il colore desiderato */
     }
 
